@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/LinesModel.qml</file>
+        <file>qml/StopsModel.qml</file>
+        <file>qml/LinesView.qml</file>
+        <file>qml/MainView.qml</file>
+        <file>qml/StopsView.qml</file>
+        <file>qml/StopView.qml</file>
+        <file>qml/LineView.qml</file>
+        <file>qml/constants.js</file>
+        <file>qml/Header.qml</file>
+        <file>qml/SearchView.qml</file>
+        <file>qml/porcorunha.js</file>
+        <file>qml/workerscript.js</file>
+        <file>resources/icon-l-bus-stop.png</file>
+        <file>resources/icon-m-bus-stop.png</file>
+        <file>resources/icon-s-bus-stop.png</file>
+    </qresource>
+</RCC>

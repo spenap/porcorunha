@@ -1,0 +1,18 @@
+Source: porcorunha
+Section: user/other
+Priority: optional
+Maintainer: Simon Pena <spena@igalia.com>
+Build-Depends: debhelper (>= 5), libqt4-dev
+Standards-Version: 3.7.3
+Homepage: https://gitorious.org/spena-playground/porcorunha
+
+Package: porcorunha
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Muévete usando el transporte público en A Coruña
+ .
+  • Consulta información sobre líneas
+  • Busca paradas a tu alrededor, por nombre o usando el mapa
+  • Comprueba cuánto falta para que llegue el bus
+  • Obtén la mejor ruta para ir a tu destino
+XSBC-Maemo-Display-Name: Por Coruña

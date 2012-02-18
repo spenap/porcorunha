@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.1
+Name=Por Coruña
+Exec=/usr/bin/single-instance /usr/bin/porcorunha
+Type=Application
+#Icon=porcorunha
