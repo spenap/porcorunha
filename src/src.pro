@@ -45,5 +45,5 @@ unix {
     desktop.files += $${TARGET}.desktop
 
     icon64.path = $$DATADIR/icons/hicolor/64x64/apps
-    icon64.files += ../data/64x64/$${TARGET}.png
+    icon64.files += ../data/icon-l-$${TARGET}.png
 }

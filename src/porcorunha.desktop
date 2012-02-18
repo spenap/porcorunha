@@ -4,4 +4,5 @@ Version=0.1
 Name=Por Coruña
 Exec=/usr/bin/single-instance /usr/bin/porcorunha
 Type=Application
-#Icon=porcorunha
+Icon=/usr/share/icons/hicolor/64x64/apps/icon-l-porcorunha.png
+
