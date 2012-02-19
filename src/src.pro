@@ -35,7 +35,8 @@ OTHER_FILES += \
     qml/SearchView.qml \
     qml/workerscript.js \
     qml/porcorunha.js \
-    qml/MapView.qml
+    qml/MapView.qml \
+    qml/ExtendedListView.qml
 
 unix {
     isEmpty(PREFIX) {

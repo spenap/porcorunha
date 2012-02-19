@@ -17,5 +17,6 @@
         <file>resources/icon-m-bus-stop.png</file>
         <file>resources/icon-s-bus-stop.png</file>
         <file>qml/MapView.qml</file>
+        <file>qml/ExtendedListView.qml</file>
     </qresource>
 </RCC>
