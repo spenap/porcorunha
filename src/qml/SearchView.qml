@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import com.nokia.meego 1.0
 import com.nokia.extras 1.1
+import QtMobility.location 1.2
 import 'constants.js' as Constants
 
 Page {
@@ -57,11 +58,72 @@ Page {
         }
     }
 
+    Item {
+        id: mapArea
+        anchors {
+            top: searchInput.bottom
+            left: parent.left
+            right: parent.right
+            margins: Constants.DEFAULT_MARGIN
+        }
+        height: Constants.MAP_AREA_HEIGHT
+
+        Map {
+            id: map
+            plugin : Plugin {
+                name : 'nokia'
+            }
+            size.width: parent.width
+            size.height: parent.height
+            zoomLevel: 14
+            center: positionSource.position.coordinate
+
+            MapCircle {
+                center: positionSource.position.coordinate
+                radius: 50
+                color: '#80ff0000'
+                border {
+                    width: 1
+                    color: 'red'
+                }
+            }
+
+            MapCircle {
+                center: positionSource.position.coordinate
+                radius: 80
+                color: 'transparent'
+                border {
+                    width: 2
+                    color: 'red'
+                }
+            }
+        }
+
+        Rectangle {
+            width: stopLabel.implicitWidth + Constants.DEFAULT_MARGIN
+            height: 40
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: '#80808080'
+            radius: 10
+            border {
+                color: 'darkgrey'
+                width: 2
+            }
+
+            Label {
+                id: stopLabel
+                anchors.centerIn: parent
+                text: appWindow.address
+                color: 'white'
+            }
+        }
+    }
+
     ListView {
         id: resultsList
         clip: true
         anchors {
-            top: searchInput.bottom
+            top: mapArea.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom

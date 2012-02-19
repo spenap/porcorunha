@@ -1,14 +1,22 @@
 TEMPLATE = app
 QT += declarative
-CONFIG += meegotouch
 TARGET = "porcorunha"
 DEPENDPATH += .
 INCLUDEPATH += .
 
-HEADERS +=
+CONFIG += meegotouch \
+          mobility
+
+MOBILITY += location
+
+HEADERS += \
+    controller.h \
+    reversegeocoder.h
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    controller.cpp \
+    reversegeocoder.cpp
 
 RESOURCES += \
     res.qrc
