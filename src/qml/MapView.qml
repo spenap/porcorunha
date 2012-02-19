@@ -5,11 +5,15 @@ import 'constants.js' as Constants
 
 Item {
     id: mapComponent
+    height: Constants.MAP_AREA_HEIGHT
 
     property Coordinate mapCenter: Coordinate { }
     property Coordinate lowerLeftCoordinate: Coordinate { }
     property Coordinate upperRightCoordinate: Coordinate { }
     property real distance: 1000
+    property bool startCentered: false
+    property bool drawPolyline: false
+    property bool drawLandmarks: true
 
     property string addressText: ''
 
@@ -79,7 +83,15 @@ Item {
             height: parent.height
         }
         zoomLevel: getZoomLevel(distance)
-        center: positionSource.position.coordinate
+        center: startCentered ?
+                    mapCenter :
+                    positionSource.position.coordinate
+
+        MapImage {
+            coordinate: mapCenter
+            source: 'qrc:/resources/icon-s-bus-stop.png'
+            visible: startCentered
+        }
 
         MapCircle {
             center: positionSource.position.coordinate
@@ -128,11 +140,21 @@ Item {
         }
 
         onItemAdded: {
-            map.addMapObject(item)
+            if (drawLandmarks) {
+                map.addMapObject(item)
+            }
+            if (drawPolyline) {
+                mapPolyline.addCoordinate(item.coordinate)
+            }
         }
 
         onItemRemoved: {
-            map.removeMapObject(item)
+            if (drawLandmarks) {
+                map.removeMapObject(item)
+            }
+            if (drawPolyline) {
+                mapPolyline.removeCoordinate(item.coordinate)
+            }
         }
     }
 

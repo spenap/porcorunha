@@ -70,7 +70,6 @@ Page {
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
-        height: Constants.MAP_AREA_HEIGHT
         landmarksModel: stopsModel
     }
 

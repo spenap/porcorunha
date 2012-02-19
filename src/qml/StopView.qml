@@ -20,7 +20,7 @@ Page {
     property string stopName: ''
     property real stopLat: 0.0
     property real stopLon: 0.0
-    property variant coordinate: Coordinate {
+    property Coordinate coordinate: Coordinate {
         latitude: stopLat
         longitude: stopLon
     }
@@ -41,7 +41,7 @@ Page {
 
     Header { id: header }
 
-    Item {
+    MapView {
         id: mapArea
         anchors {
             top: header.bottom
@@ -49,42 +49,10 @@ Page {
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
-        height: Constants.MAP_AREA_HEIGHT
-
-        Map {
-            id: map
-            plugin : Plugin {
-                name : 'nokia'
-            }
-            size.width: parent.width
-            size.height: parent.height
-            zoomLevel: 16
-            center: stopView.coordinate
-
-            MapImage {
-                coordinate: stopView.coordinate
-                source: 'qrc:/resources/icon-s-bus-stop.png'
-            }
-        }
-
-        Rectangle {
-            width: stopLabel.implicitWidth + Constants.DEFAULT_MARGIN
-            height: 40
-            anchors.horizontalCenter: parent.horizontalCenter
-            color: '#80808080'
-            radius: 10
-            border {
-                color: 'darkgrey'
-                width: 2
-            }
-
-            Label {
-                id: stopLabel
-                anchors.centerIn: parent
-                text: stopName
-                color: 'white'
-            }
-        }
+        addressText: stopName
+        mapCenter: stopView.coordinate
+        startCentered: true
+        distance: 100
     }
 
     ListView {
