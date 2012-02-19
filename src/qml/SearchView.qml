@@ -58,7 +58,16 @@ Page {
         }
     }
 
-    Item {
+    StopsModel {
+        id: stopsModel
+        source: ''
+
+        onStatusChanged: {
+            console.debug('Status:', status)
+        }
+    }
+
+    MapView {
         id: mapArea
         anchors {
             top: searchInput.bottom
@@ -67,56 +76,7 @@ Page {
             margins: Constants.DEFAULT_MARGIN
         }
         height: Constants.MAP_AREA_HEIGHT
-
-        Map {
-            id: map
-            plugin : Plugin {
-                name : 'nokia'
-            }
-            size.width: parent.width
-            size.height: parent.height
-            zoomLevel: 14
-            center: positionSource.position.coordinate
-
-            MapCircle {
-                center: positionSource.position.coordinate
-                radius: 50
-                color: '#80ff0000'
-                border {
-                    width: 1
-                    color: 'red'
-                }
-            }
-
-            MapCircle {
-                center: positionSource.position.coordinate
-                radius: 80
-                color: 'transparent'
-                border {
-                    width: 2
-                    color: 'red'
-                }
-            }
-        }
-
-        Rectangle {
-            width: stopLabel.implicitWidth + Constants.DEFAULT_MARGIN
-            height: 40
-            anchors.horizontalCenter: parent.horizontalCenter
-            color: '#80808080'
-            radius: 10
-            border {
-                color: 'darkgrey'
-                width: 2
-            }
-
-            Label {
-                id: stopLabel
-                anchors.centerIn: parent
-                text: appWindow.address
-                color: 'white'
-            }
-        }
+        landmarksModel: stopsModel
     }
 
     ListView {
@@ -130,9 +90,7 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: StopsModel {
-            source: ''
-        }
+        model: stopsModel
 
         delegate: ListDelegate {
             MoreIndicator {
