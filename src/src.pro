@@ -34,7 +34,8 @@ OTHER_FILES += \
     qml/Header.qml \
     qml/SearchView.qml \
     qml/workerscript.js \
-    qml/porcorunha.js
+    qml/porcorunha.js \
+    qml/MapView.qml
 
 unix {
     isEmpty(PREFIX) {
