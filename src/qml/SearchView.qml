@@ -32,7 +32,7 @@ Page {
         }
 
         Keys.onReturnPressed: {
-            resultsList.model.source = PorCorunha.moveteAPI.search(searchInput.text)
+            stopsModel.source = PorCorunha.moveteAPI.search(searchInput.text)
         }
         Image {
             id: clearText
@@ -48,7 +48,7 @@ Page {
             anchors.fill: clearText
             onClicked: {
                 searchInput.text = ''
-                resultsList.model.source = ''
+                stopsModel.source = ''
             }
         }
     }
@@ -56,10 +56,6 @@ Page {
     StopsModel {
         id: stopsModel
         source: ''
-
-        onStatusChanged: {
-            console.debug('Status:', status)
-        }
     }
 
     MapView {
@@ -73,9 +69,8 @@ Page {
         landmarksModel: stopsModel
     }
 
-    ListView {
-        id: resultsList
-        clip: true
+    ExtendedListView {
+        id: listView
         anchors {
             top: mapArea.bottom
             left: parent.left
@@ -84,37 +79,16 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: stopsModel
-
-        delegate: ListDelegate {
-            MoreIndicator {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            onClicked: {
-                appWindow.pageStack.push(stopView,
-                                         {
-                                             stopCode: model.code,
-                                             stopName: model.title,
-                                             stopLat: model.lat,
-                                             stopLon: model.lng
-                                         })
-            }
-        }
-    }
-
-    ScrollDecorator {
-        flickableItem: resultsList
-        anchors.rightMargin: -Constants.DEFAULT_MARGIN
-    }
-
-    BusyIndicator {
-        anchors.centerIn: parent
-        running: visible
-        visible: resultsList.model.status === XmlListModel.Loading
-        platformStyle: BusyIndicatorStyle {
-            size: 'large'
+        elvModel: stopsModel
+        loading: stopsModel.status === XmlListModel.Loading
+        onClicked: {
+            appWindow.pageStack.push(stopView,
+                                     {
+                                         stopCode: entry.code,
+                                         stopName: entry.title,
+                                         stopLat: entry.lat,
+                                         stopLon: entry.lng
+                                     })
         }
     }
 }

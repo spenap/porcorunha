@@ -2,6 +2,7 @@ import QtQuick 1.1
 import com.nokia.meego 1.0
 import com.nokia.extras 1.1
 import 'constants.js' as Constants
+import 'porcorunha.js' as PorCorunha
 
 Page {
     id: stopsView
@@ -14,22 +15,44 @@ Page {
         }
     }
 
+    Component.onCompleted: {
+        loading = true
+        asyncWorker.sendMessage({
+                                    url: PorCorunha.moveteAPI.get_stops()
+                                })
+    }
+
+    property string cachedResponse: ''
+    property bool loading: false
     property int count: 434
     property int currentPage: 1
     property int length: 10
 
-    function getUrl(page, length) {
-        return 'http://movete.trabesoluciones.net/coruna/bus/stops/list?page=' +
-                page +
-                '&length=' +
-                length
+    StopsModel {
+        id: remoteStopsModel
+        xml: cachedResponse
+        onStatusChanged: {
+            if (status === XmlListModel.Ready) {
+                for (var i = 0; i < remoteStopsModel.count; i ++) {
+                    stopsModel.append({
+                                          code: remoteStopsModel.get(i).code,
+                                          title: remoteStopsModel.get(i).title,
+                                          lat: remoteStopsModel.get(i).lat,
+                                          lng: remoteStopsModel.get(i).lng,
+                                      })
+                }
+            }
+        }
+    }
+
+    ListModel {
+        id: stopsModel
     }
 
     Header { id: header }
 
-    ListView {
+    ExtendedListView {
         id: stopsList
-        clip: true
         anchors {
             top: header.bottom
             left: parent.left
@@ -38,41 +61,30 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: StopsModel {
-            source: stopsView.status === PageStatus.Active ?
-                        getUrl(currentPage, length) :
-                        ''
-        }
-
-        delegate: ListDelegate {
-            MoreIndicator {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            onClicked: {
-                appWindow.pageStack.push(stopView,
-                                         {
-                                             stopCode: model.code,
-                                             stopName: model.title,
-                                             stopLat: model.lat,
-                                             stopLon: model.lng
-                                         })
-            }
+        elvModel: stopsModel
+        loading: stopsView.loading
+        onClicked: {
+            appWindow.pageStack.push(stopView,
+                                     {
+                                         stopCode: entry.code,
+                                         stopName: entry.title,
+                                         stopLat: entry.lat,
+                                         stopLon: entry.lng
+                                     })
         }
     }
 
-    ScrollDecorator {
-        flickableItem: stopsList
-        anchors.rightMargin: -Constants.DEFAULT_MARGIN
+    function handleResponse(messageObject) {
+        loading = false
+        cachedResponse = messageObject.response
     }
 
-    BusyIndicator {
-        anchors.centerIn: parent
-        running: visible
-        visible: stopsList.model.status === XmlListModel.Loading
-        platformStyle: BusyIndicatorStyle {
-            size: 'large'
+    WorkerScript {
+        id: asyncWorker
+        source: 'workerscript.js'
+
+        onMessage: {
+            handleResponse(messageObject)
         }
     }
 }

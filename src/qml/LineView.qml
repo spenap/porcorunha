@@ -136,36 +136,18 @@ Page {
             rightMargin: Constants.DEFAULT_MARGIN
         }
 
-    front: Item {
+    front: ExtendedListView {
         anchors.fill: parent
-
-        ScrollDecorator {
-            flickableItem: stopsList
-            anchors.rightMargin: -Constants.DEFAULT_MARGIN
-        }
-
-        ListView {
-            id: stopsList
-            anchors.fill: parent
-            clip: true
-            model: stopsModel
-
-            delegate: ListDelegate {
-                MoreIndicator {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                onClicked: {
-                    appWindow.pageStack.push(stopView,
-                                             {
-                                                 stopCode: model.code,
-                                                 stopName: model.title,
-                                                 stopLat: model.lat,
-                                                 stopLon: model.lng
-                                             })
-                }
-            }
+        elvModel: stopsModel
+        loading: lineView.loading
+        onClicked: {
+            appWindow.pageStack.push(stopView,
+                                     {
+                                         stopCode: entry.code,
+                                         stopName: entry.title,
+                                         stopLat: entry.lat,
+                                         stopLon: entry.lng
+                                     })
         }
     }
     back: MapView {
@@ -200,15 +182,6 @@ Page {
          transitions: Transition {
              NumberAnimation { target: rotation; property: "angle"; duration: 800 }
          }
-    }
-
-    BusyIndicator {
-        anchors.centerIn: parent
-        running: visible
-        visible: loading
-        platformStyle: BusyIndicatorStyle {
-            size: 'large'
-        }
     }
 
     function handleResponse(messageObject) {

@@ -50,9 +50,7 @@ Page {
 
     Header { id: header }
 
-    ListView {
-        id: linesList
-        clip: true
+    ExtendedListView {
         anchors {
             top: header.bottom
             left: parent.left
@@ -61,36 +59,16 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: linesModel
-        delegate: ListDelegate {
-            MoreIndicator {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            onClicked: {
-                appWindow.pageStack.push(lineView,
-                                         {
-                                             lineCode: model.code,
-                                             lineName: model.title,
-                                             direction: 'GO',
-                                             description: model.subtitle
-                                         })
-            }
-        }
-    }
-
-    ScrollDecorator {
-        flickableItem: linesList
-        anchors.rightMargin: -Constants.DEFAULT_MARGIN
-    }
-
-    BusyIndicator {
-        anchors.centerIn: parent
-        running: visible
-        visible: loading
-        platformStyle: BusyIndicatorStyle {
-            size: 'large'
+        elvModel: linesModel
+        loading: linesView.loading
+        onClicked: {
+            appWindow.pageStack.push(lineView,
+                                     {
+                                         lineCode: entry.code,
+                                         lineName: entry.title,
+                                         direction: 'GO',
+                                         description: entry.subtitle
+                                     })
         }
     }
 

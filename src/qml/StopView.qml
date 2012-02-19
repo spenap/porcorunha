@@ -55,9 +55,19 @@ Page {
         distance: 100
     }
 
-    ListView {
-        id: stopList
-        clip: true
+    XmlListModel {
+        id: stopModel
+        xml: cachedResponse
+        query: modelQuery
+
+        XmlRole { name: 'code'; query: '@code/string()' }
+        XmlRole { name: 'title'; query: '@name/string()' }
+        XmlRole { name: 'direction'; query: '@direction/string()' }
+        XmlRole { name: 'subtitle'; query: '@directionDescription/string()' }
+        XmlRole { name: 'description'; query: '@description/string()' }
+    }
+
+    ExtendedListView {
         anchors {
             top: mapArea.bottom
             left: parent.left
@@ -66,27 +76,10 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: XmlListModel {
-
-            xml: cachedResponse
-            query: modelQuery
-
-            XmlRole { name: 'code'; query: '@code/string()' }
-            XmlRole { name: 'title'; query: '@name/string()' }
-            XmlRole { name: 'direction'; query: '@direction/string()' }
-            XmlRole { name: 'subtitle'; query: '@directionDescription/string()' }
-            XmlRole { name: 'description'; query: '@description/string()' }
-        }
-
-
-        delegate: ListDelegate {
-            MoreIndicator {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            onClicked: {
-                detailedView.show(model)
-            }
+        loading: stopView.loading
+        elvModel: stopModel
+        onClicked: {
+            detailedView.show(entry)
         }
     }
 
@@ -166,20 +159,6 @@ Page {
                 XmlRole { name: 'title'; query: '@time/string()' }
                 XmlRole { name: 'subtitle'; query: '@distance/string()' }
             }
-        }
-    }
-
-    ScrollDecorator {
-        flickableItem: stopList
-        anchors.rightMargin: -Constants.DEFAULT_MARGIN
-    }
-
-    BusyIndicator {
-        anchors.centerIn: parent
-        running: visible
-        visible: loading
-        platformStyle: BusyIndicatorStyle {
-            size: 'large'
         }
     }
 

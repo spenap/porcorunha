@@ -6,7 +6,7 @@ import 'constants.js' as Constants
 Item {
     id: listViewArea
 
-    property XmlListModel elvModel
+    property QtObject elvModel
     property bool loading: false
 
     signal clicked(variant entry)
