@@ -3,6 +3,7 @@ import com.nokia.meego 1.0
 import com.nokia.extras 1.1
 import QtMobility.location 1.2
 import 'constants.js' as Constants
+import 'porcorunha.js' as PorCorunha
 
 Page {
     id: searchView
@@ -13,12 +14,6 @@ Page {
             iconId: 'toolbar-back'
             onClicked: pageStack.pop()
         }
-    }
-
-    function getUrl(searchTerm) {
-        return 'http://movete.trabesoluciones.net/coruna/bus/stops/search?terms=' +
-                searchTerm +
-                '&page=1&length=20'
     }
 
     Header { id: header }
@@ -37,7 +32,7 @@ Page {
         }
 
         Keys.onReturnPressed: {
-            resultsList.model.source = getUrl(searchInput.text)
+            resultsList.model.source = PorCorunha.moveteAPI.search(searchInput.text)
         }
         Image {
             id: clearText
