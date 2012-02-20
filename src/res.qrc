@@ -18,5 +18,9 @@
         <file>resources/icon-s-bus-stop.png</file>
         <file>qml/MapView.qml</file>
         <file>qml/ExtendedListView.qml</file>
+        <file>resources/icon-l-search.png</file>
+        <file>resources/icon-m-search.png</file>
+        <file>resources/icon-xxl-bus-stop.png</file>
+        <file>resources/icon-xxl-search.png</file>
     </qresource>
 </RCC>

@@ -11,39 +11,73 @@ Page {
     ListModel {
         id: mainMenuModel
         ListElement {
-            title: 'Líneas'
+            title: 'Información de líneas'
             method: 0
+            iconSource: 'qrc:/resources/icon-xxl-bus-stop.png'
         }
-        ListElement {
-            title: 'Paradas'
-            method: 1
-        }
+//        ListElement {
+//            title: 'Paradas'
+//            method: 1
+//        }
         ListElement {
             title: 'Búsqueda'
             method: 2
+            iconSource: 'qrc:/resources/icon-xxl-search.png'
         }
     }
 
     Column {
         id: column
+        spacing: 2 * Constants.DEFAULT_MARGIN
         anchors {
             top: header.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
+            topMargin: Constants.DEFAULT_MARGIN
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
 
         Repeater {
             model: mainMenuModel
-            delegate: ListDelegate {
-                MoreIndicator {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+            delegate: Component {
+                id: mainMenuDelegate
+                Rectangle {
+                    width: parent.width
+                    height: 220
+                    radius: 20
+                    color: 'darkgrey'
+                    opacity: mouseArea.pressed ? 0.5 : 1
 
-                onClicked: handleSelectedMethod(model.method)
+                    Image {
+                        anchors {
+                            top: parent.top
+                            horizontalCenter: parent.horizontalCenter
+                            margins: Constants.DEFAULT_MARGIN
+                        }
+                        source: model.iconSource
+                        fillMode: Image.PreserveAspectFit
+                    }
+
+                    Label {
+                        anchors {
+                            bottom: parent.bottom
+                            horizontalCenter: parent.horizontalCenter
+                            margins: Constants.DEFAULT_MARGIN
+                        }
+                        text: model.title
+                        platformStyle: LabelStyle {
+                            fontPixelSize: Constants.FONT_XXXLARGE
+                        }
+                    }
+
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        onClicked: handleSelectedMethod(model.method)
+                    }
+                }
             }
         }
     }
