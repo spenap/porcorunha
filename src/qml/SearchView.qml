@@ -33,6 +33,7 @@ Page {
 
         Keys.onReturnPressed: {
             stopsModel.source = PorCorunha.moveteAPI.search(searchInput.text)
+            searchInput.platformCloseSoftwareInputPanel()
         }
         Image {
             id: clearText
