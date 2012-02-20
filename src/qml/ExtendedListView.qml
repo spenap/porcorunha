@@ -6,7 +6,7 @@ import 'constants.js' as Constants
 Item {
     id: listViewArea
 
-    property QtObject elvModel
+    property alias model: listView.model
     property bool loading: false
 
     signal clicked(variant entry)
@@ -15,7 +15,6 @@ Item {
         id: listView
         clip: true
         anchors.fill: parent
-        model: elvModel
         delegate: ListDelegate {
             MoreIndicator {
                 anchors.right: parent.right

@@ -79,7 +79,7 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        elvModel: stopsModel
+        model: stopsModel
         loading: stopsModel.status === XmlListModel.Loading
         onClicked: {
             appWindow.pageStack.push(stopView,

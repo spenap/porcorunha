@@ -61,7 +61,7 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        elvModel: stopsModel
+        model: stopsModel
         loading: stopsView.loading
         onClicked: {
             appWindow.pageStack.push(stopView,

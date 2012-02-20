@@ -77,7 +77,7 @@ Page {
             rightMargin: Constants.DEFAULT_MARGIN
         }
         loading: stopView.loading
-        elvModel: stopModel
+        model: stopModel
         onClicked: {
             detailedView.show(entry)
         }

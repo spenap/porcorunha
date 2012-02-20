@@ -59,7 +59,7 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        elvModel: linesModel
+        model: linesModel
         loading: linesView.loading
         onClicked: {
             appWindow.pageStack.push(lineView,

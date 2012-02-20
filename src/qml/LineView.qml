@@ -138,7 +138,7 @@ Page {
 
     front: ExtendedListView {
         anchors.fill: parent
-        elvModel: stopsModel
+        model: stopsModel
         loading: lineView.loading
         onClicked: {
             appWindow.pageStack.push(stopView,
