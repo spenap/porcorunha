@@ -9,6 +9,17 @@ CONFIG += meegotouch \
 
 MOBILITY += location
 
+# enable booster
+CONFIG += qt-boostable qdeclarative-boostable
+
+# booster flags
+QMAKE_CXXFLAGS += -fPIC -fvisibility=hidden -fvisibility-inlines-hidden
+QMAKE_LFLAGS += -pie -rdynamic
+
+!simulator {
+    LIBS += -lmdeclarativecache
+}
+
 HEADERS += \
     controller.h \
     reversegeocoder.h
