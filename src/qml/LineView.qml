@@ -60,14 +60,15 @@ Page {
         anchors {
             top: header.bottom
             left: parent.left
-            topMargin: Constants.DEFAULT_MARGIN
-            leftMargin: Constants.DEFAULT_MARGIN
+            right: parent.right
+            margins: Constants.DEFAULT_MARGIN
         }
         text: 'Línea ' + lineName + ': ' + description
         platformStyle: LabelStyle {
             fontFamily: Constants.FONT_FAMILY
             fontPixelSize: Constants.FONT_XLARGE
         }
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
     }
 
     Label {
@@ -159,28 +160,19 @@ Page {
 
     transform: Rotation {
              id: rotation
-             origin {
-                 x: flipable.width/2
-                 y: flipable.height/2
-             }
-             axis {
-                 // set axis.y to 1 to rotate around y-axis
-                 z: 0
-                 x: 0
-                 y: 1
-             }
-             // the default angle
+             origin { x: flipable.width/2; y: flipable.height/2 }
+             axis { z: 0; x: 0; y: 1 }
              angle: 0
          }
 
          states: State {
-             name: "back"
+             name: 'back'
              PropertyChanges { target: rotation; angle: 180 }
              when: flipable.flipped
          }
 
          transitions: Transition {
-             NumberAnimation { target: rotation; property: "angle"; duration: 800 }
+             NumberAnimation { target: rotation; property: 'angle'; duration: 800 }
          }
     }
 
