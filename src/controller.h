@@ -27,6 +27,7 @@ private:
     QDeclarativeContext *m_declarativeContext;
     ReverseGeocoder* m_reverseGeoncoder;
     QHash<int, QString> m_addressLookupTable;
+    bool m_inSimulator;
 };
 
 #endif // CONTROLLER_H

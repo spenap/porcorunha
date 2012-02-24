@@ -152,7 +152,8 @@ Item {
             if (drawLandmarks) {
                 map.removeMapObject(item)
             }
-            if (drawPolyline) {
+            if (drawPolyline &&
+                    !(inSimulator && mapPolyline.path.length === 1)) {
                 mapPolyline.removeCoordinate(item.coordinate)
             }
         }

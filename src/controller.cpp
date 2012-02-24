@@ -7,9 +7,15 @@ Controller::Controller(QDeclarativeContext *context) :
     QObject(),
     m_declarativeContext(context),
     m_reverseGeoncoder(new ReverseGeocoder),
-    m_addressLookupTable()
+    m_addressLookupTable(),
+    m_inSimulator(false)
 {
+#ifdef QT_SIMULATOR
+    m_inSimulator = true;
+#endif
     m_declarativeContext->setContextProperty("controller", this);
+    m_declarativeContext->setContextProperty("inSimulator", m_inSimulator);
+
     connect(m_reverseGeoncoder, SIGNAL(addressResolved(int, QString)),
             SLOT(onAddressResolved(int,QString)));
 }

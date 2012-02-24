@@ -13,7 +13,7 @@ PageStackWindow {
 
     PositionSource {
         id: positionSource
-        active: true
+        active: inSimulator ? true : platformWindow.active
 
         onPositionChanged: {
             currentAddressLookupId =
