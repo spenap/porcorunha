@@ -24,5 +24,7 @@
         <file>resources/icon-m-search.png</file>
         <file>resources/icon-xxl-bus-stop.png</file>
         <file>resources/icon-xxl-search.png</file>
+        <file>resources/round-corners.png</file>
+        <file>resources/round-corners-shadow.png</file>
     </qresource>
 </RCC>

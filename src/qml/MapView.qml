@@ -115,6 +115,14 @@ Item {
         }
     }
 
+    BorderImage {
+        id: border
+        source: 'qrc:/resources/round-corners-shadow.png'
+        anchors.fill: parent
+        border.left: 18; border.top: 18
+        border.right: 18; border.bottom: 18
+    }
+
     Repeater {
         model: landmarksModel
         delegate: Component {
@@ -151,7 +159,11 @@ Item {
         id: addressRectangle
         width: addressLabel.implicitWidth + Constants.DEFAULT_MARGIN
         height: 40
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: parent.top
+            margins: Constants.DEFAULT_MARGIN / 2
+        }
         color: '#80808080'
         radius: 10
         border {
