@@ -3,6 +3,8 @@ import com.nokia.meego 1.0
 import com.nokia.extras 1.1
 import 'constants.js' as Constants
 import 'porcorunha.js' as PorCorunha
+import 'storage.js' as Storage
+import 'util.js' as Util
 
 Page {
     id: linesView
@@ -20,32 +22,41 @@ Page {
 
     Component.onCompleted: {
         loading = true
-        asyncWorker.sendMessage({
-                                    // There are 48 different lines
-                                    url: PorCorunha.moveteAPI.get_lines(1, 50)
-                                })
+        var lines = Storage.loadLines({ direction: 'GO' })
+        if (lines.length === 0) {
+            asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_lines(1, 50) })
+        } else {
+            for (var i = 0; i < lines.length; i ++) {
+                localModel.append(lines[i])
+            }
+            loading = false
+        }
     }
 
     LinesModel {
-        id: remoteLinesModel
+        id: remoteModel
         xml: cachedResponse
         onStatusChanged: {
-            if (status === XmlListModel.Ready) {
-                for (var i = 0; i < remoteLinesModel.count; i ++) {
-                    if (remoteLinesModel.get(i).direction === 'GO') {
-                        linesModel.append({
-                                              code: remoteLinesModel.get(i).code,
-                                              title: remoteLinesModel.get(i).name,
-                                              subtitle: remoteLinesModel.get(i).description
-                                          })
+            if (status === XmlListModel.Ready &&
+                    remoteModel.count !== 0) {
+                for (var i = 0; i < remoteModel.count; i ++) {
+                    var line = new Util.BusLine(remoteModel.get(i).code,
+                                                remoteModel.get(i).name,
+                                                remoteModel.get(i).direction,
+                                                remoteModel.get(i).directionDescription,
+                                                remoteModel.get(i).description)
+                    if (remoteModel.get(i).direction === 'GO') {
+                        localModel.append(line)
                     }
+                    Storage.saveLine(line)
                 }
+                loading = false
             }
         }
     }
 
     ListModel {
-        id: linesModel
+        id: localModel
     }
 
     Header { id: header }
@@ -59,7 +70,7 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: linesModel
+        model: localModel
         loading: linesView.loading
         onClicked: {
             appWindow.pageStack.push(lineView,
@@ -73,7 +84,6 @@ Page {
     }
 
     function handleResponse(messageObject) {
-        loading = false
         cachedResponse = messageObject.response
     }
 
