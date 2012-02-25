@@ -143,11 +143,14 @@ Page {
                                                 remoteModel.get(i).lng,
                                                 remoteModel.get(i).position)
                     localModel.append(stop)
-                    Storage.saveStop(stop)
-                    Storage.saveStopAtLine(stop, {
-                                               code: lineCode,
-                                               direction: direction
-                                           })
+                    asyncWorker.sendMessage({
+                                                action: Constants.SAVE_STOP_LINE_ACTION,
+                                                line: {
+                                                    code: lineCode,
+                                                    direction: direction
+                                                },
+                                                stop: stop
+                                            })
                     remoteModel.xml = ''
                 }
             }

@@ -24,7 +24,10 @@ Page {
         loading = true
         var lines = Storage.loadLines({ direction: 'GO' })
         if (lines.length === 0) {
-            asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_lines(1, 50) })
+            asyncWorker.sendMessage({
+                                        action: Constants.ASYNC_FETCH_ACTION,
+                                        url: PorCorunha.moveteAPI.get_lines(1, 50)
+                                    })
         } else {
             for (var i = 0; i < lines.length; i ++) {
                 localModel.append(lines[i])
@@ -48,7 +51,10 @@ Page {
                     if (remoteModel.get(i).direction === 'GO') {
                         localModel.append(line)
                     }
-                    Storage.saveLine(line)
+                    asyncWorker.sendMessage({
+                                                action: Constants.SAVE_LINE_ACTION,
+                                                line: line
+                                            })
                 }
                 loading = false
             }
