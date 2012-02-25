@@ -4,6 +4,8 @@ import com.nokia.extras 1.1
 import QtMobility.location 1.2
 import 'constants.js' as Constants
 import 'porcorunha.js' as PorCorunha
+import 'storage.js' as Storage
+import 'util.js' as Util
 
 Page {
     id: searchView
@@ -32,8 +34,16 @@ Page {
         }
 
         Keys.onReturnPressed: {
-            stopsModel.source = PorCorunha.moveteAPI.search(searchInput.text)
             searchInput.platformCloseSoftwareInputPanel()
+            localModel.clear()
+            var stops = Storage.searchStops('%' + searchInput.text + '%')
+            if (stops.length !== 0) {
+            for (var i = 0; i < stops.length; i ++) {
+                localModel.append(stops[i])
+            }
+            } else {
+                remoteModel.source = PorCorunha.moveteAPI.search(searchInput.text)
+            }
         }
         Image {
             id: clearText
@@ -49,14 +59,31 @@ Page {
             anchors.fill: clearText
             onClicked: {
                 searchInput.text = ''
-                stopsModel.source = ''
+                localModel.clear()
             }
         }
     }
 
+    ListModel {
+        id: localModel
+    }
+
     StopsModel {
-        id: stopsModel
+        id: remoteModel
         source: ''
+        onStatusChanged: {
+            if (status === XmlListModel.Ready &&
+                    remoteModel.count !== 0) {
+                for (var i = 0; i < remoteModel.count; i ++) {
+                    var stop = new Util.BusStop(remoteModel.get(i).code,
+                                                remoteModel.get(i).name,
+                                                remoteModel.get(i).lat,
+                                                remoteModel.get(i).lng)
+                    localModel.append(stop)
+                }
+                remoteModel.source = ''
+            }
+        }
     }
 
     MapView {
@@ -67,7 +94,7 @@ Page {
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
-        landmarksModel: stopsModel
+        landmarksModel: remoteModel
     }
 
     ExtendedListView {
@@ -80,8 +107,8 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: stopsModel
-        loading: stopsModel.status === XmlListModel.Loading
+        model: localModel
+        loading: remoteModel.status === XmlListModel.Loading
         onClicked: {
             appWindow.pageStack.push(stopView,
                                      {
