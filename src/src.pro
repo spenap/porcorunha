@@ -41,13 +41,15 @@ OTHER_FILES += \
     qml/LinesView.qml \
     qml/StopView.qml \
     qml/LineView.qml \
-    qml/constants.js \
     qml/Header.qml \
     qml/SearchView.qml \
+    qml/MapView.qml \
+    qml/ExtendedListView.qml \
+    qml/constants.js \
     qml/workerscript.js \
     qml/porcorunha.js \
-    qml/MapView.qml \
-    qml/ExtendedListView.qml
+    qml/storage.js \
+    qml/util.js
 
 unix {
     isEmpty(PREFIX) {

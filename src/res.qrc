@@ -8,16 +8,18 @@
         <file>qml/StopsView.qml</file>
         <file>qml/StopView.qml</file>
         <file>qml/LineView.qml</file>
-        <file>qml/constants.js</file>
         <file>qml/Header.qml</file>
         <file>qml/SearchView.qml</file>
+        <file>qml/MapView.qml</file>
+        <file>qml/ExtendedListView.qml</file>
+        <file>qml/constants.js</file>
         <file>qml/porcorunha.js</file>
         <file>qml/workerscript.js</file>
+        <file>qml/util.js</file>
+        <file>qml/storage.js</file>
         <file>resources/icon-l-bus-stop.png</file>
         <file>resources/icon-m-bus-stop.png</file>
         <file>resources/icon-s-bus-stop.png</file>
-        <file>qml/MapView.qml</file>
-        <file>qml/ExtendedListView.qml</file>
         <file>resources/icon-l-search.png</file>
         <file>resources/icon-m-search.png</file>
         <file>resources/icon-xxl-bus-stop.png</file>
