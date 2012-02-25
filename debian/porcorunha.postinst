@@ -1,0 +1,14 @@
+#! /bin/sh
+
+set -e
+
+if [ "$1" = configure ] ; then
+        if test ! -d  /home/user/.local/share/data/simonpena/PorCorunha/; then
+            STORAGE_PATH=/home/user/.local/share/data/simonpena/PorCorunha/Databases
+            mkdir -p $STORAGE_PATH
+            cp /opt/porcorunha/share/bus-transportation.db \
+               $STORAGE_PATH/e8ace1a9a157dfff69cc17e9fe7039b4.sqlite
+            cp /opt/porcorunha/share/bus-transportation.ini \
+               $STORAGE_PATH/e8ace1a9a157dfff69cc17e9fe7039b4.ini
+        fi
+fi

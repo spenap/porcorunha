@@ -4,8 +4,7 @@ TARGET = "porcorunha"
 DEPENDPATH += .
 INCLUDEPATH += .
 
-CONFIG += meegotouch \
-          mobility
+CONFIG += mobility
 
 MOBILITY += location
 
@@ -53,20 +52,24 @@ OTHER_FILES += \
 
 unix {
     isEmpty(PREFIX) {
-        PREFIX = /usr
+        PREFIX = /opt/$${TARGET}
     }
     BINDIR = $$PREFIX/bin
     DATADIR =$$PREFIX/share
 
     DEFINES += DATADIR=\\\"$$DATADIR\\\" PKGDATADIR=\\\"$$PKGDATADIR\\\"
 
-    INSTALLS += target desktop icon64
+    INSTALLS += target desktop icon64 database
 
     target.path =$$BINDIR
 
-    desktop.path = $$DATADIR/applications
+    desktop.path = /usr/share/applications
     desktop.files += $${TARGET}.desktop
 
-    icon64.path = $$DATADIR/icons/hicolor/64x64/apps
+    icon64.path = /usr/share/icons/hicolor/64x64/apps
     icon64.files += ../data/icon-l-$${TARGET}.png
+
+    database.path = $$DATADIR/
+    database.files += ../data/bus-transportation.db
+    database.files += ../data/bus-transportation.ini
 }

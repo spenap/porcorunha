@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Version=0.1
 Name=Por Coruña
-Exec=/usr/bin/single-instance /usr/bin/porcorunha
+Exec=/usr/bin/invoker --single-instance --type=d /opt/porcorunha/bin/porcorunha
 Type=Application
 Icon=/usr/share/icons/hicolor/64x64/apps/icon-l-porcorunha.png
 
