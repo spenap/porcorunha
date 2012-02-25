@@ -4,6 +4,7 @@
 #include <QDeclarativeContext>
 #include <QDeclarativeView>
 #include <QDeclarativeEngine>
+#include <QDesktopServices>
 #ifndef QT_SIMULATOR
     #include <MDeclarativeCache>
 #endif
@@ -21,6 +22,13 @@ int main(int argc, char *argv[])
     app = new QApplication(argc, argv);
     view = new QDeclarativeView;
 #endif
+
+    app->setApplicationName("PorCorunha");
+    app->setOrganizationDomain("com.simonpena");
+    app->setOrganizationName("simonpena");
+
+    view->engine()->setOfflineStoragePath(
+                QDesktopServices::storageLocation(QDesktopServices::DataLocation));
 
     QDeclarativeContext* context = view->rootContext();
     Controller* controller = new Controller(context);
