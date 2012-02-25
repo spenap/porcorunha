@@ -2,9 +2,14 @@ import QtQuick 1.1
 import com.nokia.meego 1.0
 import com.nokia.extras 1.1
 import 'constants.js' as Constants
+import 'storage.js' as Storage
 
 Page {
     id: mainView
+
+    Component.onCompleted: {
+        Storage.initialize()
+    }
 
     Header { id: header }
 
