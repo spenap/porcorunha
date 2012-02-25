@@ -42,6 +42,7 @@ Page {
                 localModel.append(stops[i])
             }
             loading = false
+            mapView.fitContentInMap()
         }
     }
 
@@ -59,6 +60,7 @@ Page {
             for (var i = 0; i < stops.length; i ++) {
                 localModel.append(stops[i])
             }
+            mapView.fitContentInMap()
         } else if (!cachedResponse[direction]) {
             loading = true
             asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.show_line(lineCode, direction) })
@@ -151,8 +153,9 @@ Page {
                                                 },
                                                 stop: stop
                                             })
-                    remoteModel.xml = ''
                 }
+                remoteModel.xml = ''
+                mapView.fitContentInMap()
             }
         }
     }
@@ -190,10 +193,11 @@ Page {
         }
     }
     back: MapView {
+        id: mapView
         anchors.fill: parent
         drawLandmarks: false
         drawPolyline: true
-        landmarksModel: remoteModel
+        landmarksModel: localModel
     }
 
     transform: Rotation {

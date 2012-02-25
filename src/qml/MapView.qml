@@ -17,34 +17,22 @@ Item {
 
     property string addressText: ''
 
-    property XmlListModel landmarksModel
+    property ListModel landmarksModel
 
     signal clicked()
 
-    Connections {
-        target: landmarksModel
-        onStatusChanged: {
-            if (landmarksModel.count !== 0) {
-                fitContentInMap()
-            }
-        }
-    }
-
     function fitContentInMap() {
-        var lat = 0, lon = 0
         var minLat = 100, minLon = 100
         var maxLat = -100, maxLon = -100
-        for (var i = 0; i < landmarksModel.count; i ++) {
-            lat += landmarksModel.get(i).lat
-            lon += landmarksModel.get(i).lng
 
+        for (var i = 0; i < landmarksModel.count; i ++) {
             minLat = Math.min(minLat, landmarksModel.get(i).lat)
-            minLon = Math.min(minLon, landmarksModel.get(i).lng)
+            minLon = Math.min(minLon, landmarksModel.get(i).lon)
             maxLat = Math.max(maxLat, landmarksModel.get(i).lat)
-            maxLon = Math.max(maxLon, landmarksModel.get(i).lng)
+            maxLon = Math.max(maxLon, landmarksModel.get(i).lon)
         }
-        mapCenter.latitude = lat / landmarksModel.count
-        mapCenter.longitude  = lon / landmarksModel.count
+        mapCenter.latitude = (minLat + maxLat) / 2
+        mapCenter.longitude  = (minLon + maxLon) / 2
 
         lowerLeftCoordinate.latitude = minLat
         lowerLeftCoordinate.longitude = minLon
@@ -133,7 +121,7 @@ Item {
             MapImage {
                 coordinate: Coordinate {
                     latitude: model.lat
-                    longitude: model.lng
+                    longitude: model.lon
                 }
                 source: 'qrc:/resources/icon-s-bus-stop.png'
             }

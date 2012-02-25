@@ -38,9 +38,10 @@ Page {
             localModel.clear()
             var stops = Storage.searchStops('%' + searchInput.text + '%')
             if (stops.length !== 0) {
-            for (var i = 0; i < stops.length; i ++) {
-                localModel.append(stops[i])
-            }
+                for (var i = 0; i < stops.length; i ++) {
+                    localModel.append(stops[i])
+                }
+                mapArea.fitContentInMap()
             } else {
                 remoteModel.source = PorCorunha.moveteAPI.search(searchInput.text)
             }
@@ -82,6 +83,7 @@ Page {
                     localModel.append(stop)
                 }
                 remoteModel.source = ''
+                mapArea.fitContentInMap()
             }
         }
     }
@@ -94,7 +96,7 @@ Page {
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
-        landmarksModel: remoteModel
+        landmarksModel: localModel
     }
 
     ExtendedListView {
