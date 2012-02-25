@@ -4,6 +4,8 @@ import com.nokia.extras 1.1
 import QtMobility.location 1.2
 import 'constants.js' as Constants
 import 'porcorunha.js' as PorCorunha
+import 'storage.js' as Storage
+import 'util.js' as Util
 
 Page {
     id: lineView
@@ -32,9 +34,15 @@ Page {
 
     Component.onCompleted: {
         loading = true
-        asyncWorker.sendMessage({
-                                    url: PorCorunha.moveteAPI.show_line(lineCode, direction)
-                                })
+        var stops = Storage.loadStopsByLine({ direction: direction, lineCode: lineCode })
+        if (stops.length === 0) {
+            asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.show_line(lineCode, direction) })
+        } else {
+            for (var i = 0; i < stops.length; i ++) {
+                localModel.append(stops[i])
+            }
+            loading = false
+        }
     }
 
     function getDestination(direction) {
@@ -45,11 +53,15 @@ Page {
     }
 
     onDirectionChanged: {
-        if (!cachedResponse[direction]) {
+        localModel.clear()
+        var stops = Storage.loadStopsByLine({ direction: direction, lineCode: lineCode })
+        if (stops.length !== 0) {
+            for (var i = 0; i < stops.length; i ++) {
+                localModel.append(stops[i])
+            }
+        } else if (!cachedResponse[direction]) {
             loading = true
-            asyncWorker.sendMessage({
-                                        url: PorCorunha.moveteAPI.show_line(lineCode, direction)
-                                    })
+            asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.show_line(lineCode, direction) })
         }
     }
 
@@ -112,15 +124,38 @@ Page {
     }
 
     XmlListModel {
-        id: stopsModel
-        xml: cachedResponse[direction]
+        id: remoteModel
         query: '/line/stop'
 
         XmlRole { name: 'code'; query: '@code/string()' }
-        XmlRole { name: 'title'; query: '@name/string()' }
+        XmlRole { name: 'name'; query: '@name/string()' }
         XmlRole { name: 'lat'; query: '@lat/number()' }
         XmlRole { name: 'lng'; query: '@lng/number()' }
         XmlRole { name: 'position'; query: '@position/string()' }
+
+        onStatusChanged: {
+            if (status === XmlListModel.Ready &&
+                    remoteModel.count !== 0) {
+                for (var i = 0; i < remoteModel.count; i ++) {
+                    var stop = new Util.BusStop(remoteModel.get(i).code,
+                                                remoteModel.get(i).name,
+                                                remoteModel.get(i).lat,
+                                                remoteModel.get(i).lng,
+                                                remoteModel.get(i).position)
+                    localModel.append(stop)
+                    Storage.saveStop(stop)
+                    Storage.saveStopAtLine(stop, {
+                                               code: lineCode,
+                                               direction: direction
+                                           })
+                    remoteModel.xml = ''
+                }
+            }
+        }
+    }
+
+    ListModel {
+        id: localModel
     }
 
     Flipable {
@@ -139,7 +174,7 @@ Page {
 
     front: ExtendedListView {
         anchors.fill: parent
-        model: stopsModel
+        model: localModel
         loading: lineView.loading
         onClicked: {
             appWindow.pageStack.push(stopView,
@@ -155,7 +190,7 @@ Page {
         anchors.fill: parent
         drawLandmarks: false
         drawPolyline: true
-        landmarksModel: stopsModel
+        landmarksModel: remoteModel
     }
 
     transform: Rotation {
@@ -185,6 +220,7 @@ Page {
 
         response[direction] = messageObject.response
         cachedResponse = response
+        remoteModel.xml = cachedResponse[direction]
     }
 
     WorkerScript {
