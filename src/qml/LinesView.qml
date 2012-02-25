@@ -51,10 +51,12 @@ Page {
                     if (remoteModel.get(i).direction === 'GO') {
                         localModel.append(line)
                     }
-                    asyncWorker.sendMessage({
-                                                action: Constants.SAVE_LINE_ACTION,
-                                                line: line
-                                            })
+                    if (!inSimulator) {
+                        asyncWorker.sendMessage({
+                                                    action: Constants.SAVE_LINE_ACTION,
+                                                    line: line
+                                                })
+                    }
                 }
                 loading = false
             }

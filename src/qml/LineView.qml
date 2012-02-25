@@ -64,6 +64,8 @@ Page {
         } else if (!cachedResponse[direction]) {
             loading = true
             asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.show_line(lineCode, direction) })
+        } else {
+            remoteModel.xml = cachedResponse[direction]
         }
     }
 
@@ -145,14 +147,16 @@ Page {
                                                 remoteModel.get(i).lng,
                                                 remoteModel.get(i).position)
                     localModel.append(stop)
-                    asyncWorker.sendMessage({
-                                                action: Constants.SAVE_STOP_LINE_ACTION,
-                                                line: {
-                                                    code: lineCode,
-                                                    direction: direction
-                                                },
-                                                stop: stop
-                                            })
+                    if (!inSimulator) {
+                        asyncWorker.sendMessage({
+                                                    action: Constants.SAVE_STOP_LINE_ACTION,
+                                                    line: {
+                                                        code: lineCode,
+                                                        direction: direction
+                                                    },
+                                                    stop: stop
+                                                })
+                    }
                 }
                 remoteModel.xml = ''
                 mapView.fitContentInMap()
