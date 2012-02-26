@@ -20,6 +20,10 @@ Page {
 
     Header { id: header }
 
+    Component.onCompleted: {
+        searchInput.forceActiveFocus()
+    }
+
     TextField {
         id: searchInput
         placeholderText: 'Busca una parada'
@@ -34,7 +38,7 @@ Page {
         }
 
         Keys.onReturnPressed: {
-            searchInput.platformCloseSoftwareInputPanel()
+            mapArea.forceActiveFocus()
             localModel.clear()
             var stops = Storage.searchStops('%' + searchInput.text + '%')
             if (stops.length !== 0) {
