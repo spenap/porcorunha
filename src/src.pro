@@ -49,7 +49,8 @@ OTHER_FILES += \
     qml/workerscript.js \
     qml/porcorunha.js \
     qml/storage.js \
-    qml/util.js
+    qml/util.js \
+    TODO.txt
 
 unix {
     isEmpty(PREFIX) {
