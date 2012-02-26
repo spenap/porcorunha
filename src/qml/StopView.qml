@@ -14,6 +14,15 @@ Page {
             iconId: 'toolbar-back'
             onClicked: pageStack.pop()
         }
+        ToolIcon {
+            id: refreshIcon
+            iconId: 'toolbar-refresh'
+            onClicked: {
+                cachedResponse = ''
+                loading = true
+                asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_distances(stopCode) })
+            }
+        }
     }
 
     property int stopCode: 0
@@ -34,9 +43,7 @@ Page {
 
     Component.onCompleted: {
         loading = true
-        asyncWorker.sendMessage({
-                                    url: PorCorunha.moveteAPI.get_distances(stopCode)
-                                })
+        asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_distances(stopCode) })
     }
 
     Header { id: header }
@@ -78,87 +85,8 @@ Page {
         }
         loading: stopView.loading
         model: stopModel
-        onClicked: {
-            detailedView.show(entry)
-        }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: detailedView.hide()
-        enabled: detailedView.visible
-    }
-
-    Item {
-        id: detailedView
-        height: parent.height / 2
-        width: parent.width
-        anchors.verticalCenter: parent.verticalCenter
-        visible: false
-
-        property variant modelEntry: ({ })
-        property string detailsModelSource: ''
-
-        function show(modelEntry) {
-            detailedView.visible = true
-            detailedView.modelEntry = modelEntry
-        }
-
-        function hide() {
-            detailedView.visible = false
-        }
-
-        Rectangle {
-            anchors.fill: parent
-            color: 'white'
-        }
-
-        Label {
-            id: lineLabel
-            anchors {
-                top: parent.top
-                left: parent.left
-                topMargin: Constants.DEFAULT_MARGIN
-                leftMargin: Constants.DEFAULT_MARGIN
-            }
-            text: 'Línea ' + detailedView.modelEntry.title + ': ' + detailedView.modelEntry.description
-            platformStyle: LabelStyle {
-                fontFamily: Constants.FONT_FAMILY
-                fontPixelSize: Constants.FONT_XLARGE
-            }
-        }
-
-        Label {
-            id: directionLabel
-            anchors {
-                top: lineLabel.bottom
-                left: parent.left
-                topMargin: Constants.DEFAULT_MARGIN
-                leftMargin: Constants.DEFAULT_MARGIN
-            }
-            text: 'Dirección: ' + detailedView.modelEntry.subtitle
-            platformStyle: LabelStyle {
-                fontFamily: Constants.FONT_FAMILY_LIGHT
-            }
-        }
-
-        ListView {
-            id: detailsList
-            anchors.top: directionLabel.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.margins: Constants.DEFAULT_MARGIN
-            delegate: ListDelegate { }
-            model: XmlListModel {
-
-                xml: !detailedView.modelEntry.code ? '' : cachedResponse
-                query: '/stop/line[@code=' + detailedView.modelEntry.code + ']/vehicle'
-
-                XmlRole { name: 'code'; query: '@code/string()' }
-                XmlRole { name: 'title'; query: '@time/string()' }
-                XmlRole { name: 'subtitle'; query: '@distance/string()' }
-            }
+        delegate: LocalListDelegate {
+            response: cachedResponse
         }
     }
 

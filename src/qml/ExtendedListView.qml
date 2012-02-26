@@ -7,6 +7,7 @@ Item {
     id: listViewArea
 
     property alias model: listView.model
+    property alias delegate: listView.delegate
     property bool loading: false
 
     signal clicked(variant entry)

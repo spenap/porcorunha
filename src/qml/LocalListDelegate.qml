@@ -38,109 +38,142 @@
 **
 ****************************************************************************/
 
+// Inspiration for the accordion behaviour comes from
+// https://projects.forum.nokia.com/QMLTemplates/browser/AccordionList/component/AccordionList.qml
+
 import QtQuick 1.1
 import com.nokia.meego 1.0
 import com.nokia.extras 1.1
-import "constants.js" as UI
+import 'constants.js' as UI
+import 'util.js' as Util
 
 Item {
     id: listItem
 
     signal clicked
-    property alias pressed: mouseArea.pressed
 
-    property int titleSize: UI.LIST_TILE_SIZE
-    property int titleWeight: Font.Bold
-    property string titleFont: UI.FONT_FAMILY
-    property color titleColor: theme.inverted ? UI.LIST_TITLE_COLOR_INVERTED : UI.LIST_TITLE_COLOR
-    property color titleColorPressed: theme.inverted ? UI.LIST_TITLE_COLOR_PRESSED_INVERTED : UI.LIST_TITLE_COLOR_PRESSED
-
-    property int subtitleSize: UI.LIST_SUBTILE_SIZE
-    property int subtitleWeight: Font.Normal
-    property string subtitleFont: UI.FONT_FAMILY_LIGHT
-    property color subtitleColor: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
-    property color subtitleColorPressed: theme.inverted ? UI.LIST_SUBTITLE_COLOR_PRESSED_INVERTED : UI.LIST_SUBTITLE_COLOR_PRESSED
-
-    property string iconSource: model.iconSource ? model.iconSource : ""
+    property string code: model.code
     property string titleText: model.title
-    property string subtitleText: model.subtitle ? model.subtitle : ""
+    property string subtitleText: model.subtitle ? model.subtitle : ''
+    property string response: ''
+    property bool expanded: false
 
-    property string iconId
-    property bool iconVisible: false
-
-    height: UI.LIST_ITEM_HEIGHT
+    height: UI.LIST_ITEM_HEIGHT + subItems.height
     width: parent.width
 
-    BorderImage {
-        id: background
-        anchors.fill: parent
-        // Fill page porders
-        anchors.leftMargin: -UI.MARGIN_XLARGE
-        anchors.rightMargin: -UI.MARGIN_XLARGE
-        visible: mouseArea.pressed
-        source: theme.inverted ? "image://theme/meegotouch-panel-inverted-background-pressed" : "image://theme/meegotouch-panel-background-pressed"
-    }
+    XmlListModel {
+        id: remoteModel
+        xml: response
+        query: '/stop/line[@code=' + listItem.code + ']/vehicle'
 
-    Row {
-        anchors.fill: parent
-        spacing: UI.LIST_ITEM_SPACING
+        XmlRole { name: 'code'; query: '@code/string()' }
+        XmlRole { name: 'time'; query: '@time/string()' }
+        XmlRole { name: 'distance'; query: '@distance/string()' }
 
-        Image {
-            anchors.verticalCenter: parent.verticalCenter
-            visible: listItem.iconSource ? true : false
-            width: UI.LIST_ICON_SIZE
-            height: UI.LIST_ICON_SIZE
-            source: listItem.iconSource ? listItem.iconSource : ""
-        }
+        onStatusChanged: {
+            if (status === XmlListModel.Ready &&
+                    remoteModel.count !== 0) {
+                for (var i = 0; i < remoteModel.count; i ++) {
+                    var busTime = new Util.BusTime(remoteModel.get(i).code,
+                                                   remoteModel.get(i).time,
+                                                   remoteModel.get(i).distance)
+                    localModel.append(busTime)
+                }
 
-        Column {
-            anchors.verticalCenter: parent.verticalCenter
-
-            Label {
-                id: mainText
-                text: listItem.titleText
-                font.family: listItem.titleFont
-                font.weight: listItem.titleWeight
-                font.pixelSize: listItem.titleSize
-                color: mouseArea.pressed ? listItem.titleColorPressed : listItem.titleColor
-            }
-
-            Label {
-                id: subText
-                text: listItem.subtitleText ? listItem.subtitleText : ""
-                font.family: listItem.subtitleFont
-                font.weight: listItem.subtitleWeight
-                font.pixelSize: listItem.subtitleSize
-                color: mouseArea.pressed ? listItem.subtitleColorPressed : listItem.subtitleColor
-
-                visible: text != ""
             }
         }
     }
-    MouseArea {
-        id: mouseArea;
+
+    ListModel {
+        id: localModel
+    }
+
+    Column {
+        id: delegateColumn
         anchors.fill: parent
-        onClicked: {
-            listItem.clicked();
+
+        Item {
+            height: UI.LIST_ITEM_HEIGHT
+            width: parent.width
+            clip: true
+
+            BorderImage {
+                id: background
+                anchors {
+                    fill: parent
+                    leftMargin: -UI.MARGIN_XLARGE
+                    rightMargin: -UI.MARGIN_XLARGE
+                }
+                visible: mouseArea.pressed
+                source: 'image://theme/meegotouch-panel-background-pressed'
+            }
+
+            Column {
+                anchors.topMargin: 2
+                anchors.fill: parent
+
+                Label {
+                    id: mainText
+                    text: listItem.titleText
+                    platformStyle: LabelStyle {
+                        fontPixelSize: UI.LIST_TILE_SIZE
+                    }
+                    font.weight: Font.Bold
+                    color: mouseArea.pressed ? UI.LIST_TITLE_COLOR_PRESSED : UI.LIST_TITLE_COLOR
+                }
+
+                Label {
+                    id: subText
+                    text: listItem.subtitleText ? listItem.subtitleText : ''
+                    platformStyle: LabelStyle {
+                        fontPixelSize: UI.LIST_SUBTILE_SIZE
+                        fontFamily: UI.FONT_FAMILY_LIGHT
+                    }
+                    color: mouseArea.pressed ? UI.LIST_SUBTITLE_COLOR_PRESSED : UI.LIST_SUBTITLE_COLOR
+
+                    visible: text !== ''
+                }
+            }
+
+            MouseArea {
+                id: mouseArea;
+                anchors.fill: parent
+                onClicked: {
+                    listItem.expanded = !listItem.expanded
+                }
+            }
+
+            MoreIndicator {
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                rotation: listItem.expanded ? -90 : 90
+            }
+        }
+
+        Item {
+            id: subItems
+            width: parent.width
+            height: expanded ? remoteModel.count * UI.LIST_ITEM_HEIGHT : 0
+            clip: true
+
+            Behavior on height {
+                NumberAnimation { duration: 100; easing.type: Easing.InOutQuad }
+            }
+
+            Column {
+                width: parent.width
+
+                Repeater {
+                    id: accordionRepeater
+                    width: parent.width
+                    model: localModel
+                    delegate: ListDelegate {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: UI.DEFAULT_MARGIN
+                    }
+                }
+            }
         }
     }
-
-    Image {
-        function handleIconId() {
-            var prefix = "icon-m-"
-            // check if id starts with prefix and use it as is
-            // otherwise append prefix and use the inverted version if required
-            if (iconId.indexOf(prefix) !== 0)
-                iconId =  prefix.concat(iconId).concat(theme.inverted ?  "-inverse" : "");
-            return "image://theme/" + iconId;
-        }
-
-        visible: iconVisible
-        source: iconId ? handleIconId() : ""
-        anchors {
-            right: parent.right;
-            verticalCenter: parent.verticalCenter;
-        }
-    }
-
 }

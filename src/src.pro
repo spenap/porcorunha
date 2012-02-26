@@ -44,6 +44,7 @@ OTHER_FILES += \
     qml/SearchView.qml \
     qml/MapView.qml \
     qml/ExtendedListView.qml \
+    qml/LocalListDelegate.qml \
     qml/constants.js \
     qml/workerscript.js \
     qml/porcorunha.js \

@@ -12,6 +12,7 @@
         <file>qml/SearchView.qml</file>
         <file>qml/MapView.qml</file>
         <file>qml/ExtendedListView.qml</file>
+        <file>qml/LocalListDelegate.qml</file>
         <file>qml/constants.js</file>
         <file>qml/porcorunha.js</file>
         <file>qml/workerscript.js</file>

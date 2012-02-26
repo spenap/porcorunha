@@ -31,3 +31,12 @@ function BusStop(code, name, lat, lng, position) {
     this.title = this.name
     this.lng = this.lon
 }
+
+function BusTime(code, time, distance) {
+    this.code = code
+    this.time = time
+    this.distance = distance
+
+    this.title = 'Llegada en ' + this.time + ' minutos'
+    this.subtitle = 'Se encuentra a ' + this.distance + 'm'
+}
