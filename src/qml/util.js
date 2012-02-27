@@ -34,9 +34,11 @@ function BusStop(code, name, lat, lng, position) {
 
 function BusTime(code, time, distance) {
     this.code = code
+    this.arrivalTime = new Date
     this.time = time
     this.distance = distance
 
-    this.title = 'Llegada en ' + this.time + ' minutos'
+    this.arrivalTime.setMinutes(time + this.arrivalTime.getMinutes())
+    this.title = 'Llegada a las ' + Qt.formatTime(this.arrivalTime)
     this.subtitle = 'Se encuentra a ' + this.distance + 'm'
 }

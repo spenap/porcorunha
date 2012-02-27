@@ -67,7 +67,7 @@ Item {
         query: '/stop/line[@code=' + listItem.code + ']/vehicle'
 
         XmlRole { name: 'code'; query: '@code/string()' }
-        XmlRole { name: 'time'; query: '@time/string()' }
+        XmlRole { name: 'time'; query: '@time/number()' }
         XmlRole { name: 'distance'; query: '@distance/string()' }
 
         onStatusChanged: {

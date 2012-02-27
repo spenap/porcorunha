@@ -40,6 +40,7 @@ Page {
     property string linesQuery: '/lines/line'
     property string distancesQuery: '/stop/line'
     property string modelQuery: distancesQuery
+    property string lastUpdate: ''
 
     Component.onCompleted: {
         loading = true
@@ -85,6 +86,16 @@ Page {
         }
         loading: stopView.loading
         model: stopModel
+        header: Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            platformStyle: LabelStyle {
+                fontPixelSize: Constants.FONT_XXSMALL
+                fontFamily: Constants.FONT_FAMILY_LIGHT
+            }
+            text: 'Última actualización: ' + stopView.lastUpdate
+            horizontalAlignment: Text.AlignHCenter
+            visible: stopView.lastUpdate !== ''
+        }
         delegate: LocalListDelegate {
             response: cachedResponse
         }
@@ -96,8 +107,10 @@ Page {
                 messageObject.url === PorCorunha.moveteAPI.get_distances(stopCode)) {
             modelQuery = linesQuery
             asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_lines_by_stop(stopCode, 1, 20)})
+        } else {
+            stopView.lastUpdate = Qt.formatTime(new Date)
+            loading = false
         }
-        loading = false
     }
 
     WorkerScript {

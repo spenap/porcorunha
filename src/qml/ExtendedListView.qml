@@ -8,6 +8,7 @@ Item {
 
     property alias model: listView.model
     property alias delegate: listView.delegate
+    property alias header: listView.header
     property bool loading: false
 
     signal clicked(variant entry)
