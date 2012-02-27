@@ -26,8 +26,16 @@ Page {
 
     Header { id: header }
 
-    Component.onCompleted: {
-        searchInput.forceActiveFocus()
+    function retrieveStopsNearby() {
+        var nearStops =
+                Storage.searchStopsByCoordinate(positionSource.position.coordinate)
+        if (nearStops.length > 0 ) {
+            localModel.clear()
+            for (var i = 0; i < nearStops.length; i ++) {
+                localModel.append(nearStops[i])
+            }
+            mapArea.fitContentInMap()
+        }
     }
 
     TextField {
@@ -46,7 +54,7 @@ Page {
         Keys.onReturnPressed: {
             mapArea.forceActiveFocus()
             localModel.clear()
-            var stops = Storage.searchStops('%' + searchInput.text + '%')
+            var stops = Storage.searchStopsByName('%' + searchInput.text + '%')
             if (stops.length !== 0) {
                 for (var i = 0; i < stops.length; i ++) {
                     localModel.append(stops[i])
@@ -137,13 +145,28 @@ Page {
         ]
     }
 
+    Button {
+        id: searchButton
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: mapArea.bottom
+            margins: Constants.DEFAULT_MARGIN
+        }
+        text: 'Paradas cerca de aquí'
+        onClicked: {
+            retrieveStopsNearby()
+        }
+    }
+
     ExtendedListView {
         id: listView
         anchors {
-            top: mapArea.bottom
+            top: searchButton.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
+            topMargin: Constants.DEFAULT_MARGIN
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }

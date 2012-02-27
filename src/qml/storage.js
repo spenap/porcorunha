@@ -160,7 +160,7 @@ function loadStopsByLine(busLine) {
     return res
 }
 
-function searchStops(stopName) {
+function searchStopsByName(stopName) {
     var db = getDatabase()
     var res = []
     try {
@@ -184,5 +184,33 @@ function searchStops(stopName) {
         console.log(ex)
     }
 
+    return res
+}
+
+function searchStopsByCoordinate(coordinate) {
+    var db = getDatabase()
+    var res = []
+    try {
+        db.transaction(function(tx) {
+                           var rs = tx.executeSql('SELECT code, name, lat, lon, ' +
+                                                  '(abs(lat - ?) + abs(lon - ?)) AS distance ' +
+                                                  'FROM stops ' +
+                                                  'ORDER BY distance ASC ' +
+                                                  'LIMIT 5', [coordinate.latitude,
+                                                              coordinate.longitude])
+                           if (rs.rows.length > 0) {
+                               for (var i = 0; i < rs.rows.length; i ++) {
+                                   var currentItem = rs.rows.item(i)
+                                   var stop = new BusStop(currentItem.code,
+                                                          currentItem.name,
+                                                          currentItem.lat,
+                                                          currentItem.lon)
+                                   res.push(stop)
+                               }
+                           }
+                       })
+    } catch (ex) {
+        console.log(ex)
+    }
     return res
 }
