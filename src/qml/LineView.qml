@@ -202,6 +202,8 @@ Page {
         drawLandmarks: false
         drawPolyline: true
         landmarksModel: localModel
+        interactive: true
+        fullscreen: false
     }
 
     transform: Rotation {

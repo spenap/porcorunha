@@ -14,7 +14,13 @@ Page {
         ToolIcon {
             id: backIcon
             iconId: 'toolbar-back'
-            onClicked: pageStack.pop()
+            onClicked: {
+                if (mapArea.interactive) {
+                    mapArea.interactive = false
+                } else {
+                    pageStack.pop()
+                }
+            }
         }
     }
 
@@ -95,12 +101,40 @@ Page {
     MapView {
         id: mapArea
         anchors {
-            top: searchInput.bottom
             left: parent.left
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
         landmarksModel: localModel
+        onClicked: mapArea.interactive = !mapArea.interactive
+        states: [
+            State {
+                name: 'fullScreen'
+                when: mapArea.interactive
+                PropertyChanges {
+                    target: mapArea
+                    anchors.margins: 0
+                    height: parent.height
+                }
+                AnchorChanges {
+                    target: mapArea
+                    anchors.top: mapArea.parent.top
+                }
+            },
+            State {
+                name: 'widget'
+                when: !mapArea.interactive
+                PropertyChanges {
+                    target: mapArea
+                    anchors.margins: Constants.DEFAULT_MARGIN
+                    height: Constants.MAP_AREA_HEIGHT
+                }
+                AnchorChanges {
+                    target: mapArea
+                    anchors.top: searchInput.bottom
+                }
+            }
+        ]
     }
 
     ExtendedListView {

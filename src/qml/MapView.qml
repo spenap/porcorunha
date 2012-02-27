@@ -27,6 +27,14 @@ Item {
 
     signal clicked()
 
+    Behavior on height {
+        NumberAnimation { duration: 100; easing.type: Easing.InOutQuad }
+    }
+
+    Behavior on width {
+        NumberAnimation { duration: 100; easing.type: Easing.InOutQuad }
+    }
+
     function fitContentInMap() {
         var minLat = 100, minLon = 100
         var maxLat = -100, maxLon = -100
