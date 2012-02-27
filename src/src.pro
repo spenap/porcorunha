@@ -61,7 +61,7 @@ unix {
 
     DEFINES += DATADIR=\\\"$$DATADIR\\\" PKGDATADIR=\\\"$$PKGDATADIR\\\"
 
-    INSTALLS += target desktop icon64 database
+    INSTALLS += target desktop icon64 database splash
 
     target.path =$$BINDIR
 
@@ -74,4 +74,7 @@ unix {
     database.path = $$DATADIR/
     database.files += ../data/bus-transportation.db
     database.files += ../data/bus-transportation.ini
+
+    splash.path = $$DATADIR/
+    splash.files += ../data/porcorunha-portrait-splash.png
 }

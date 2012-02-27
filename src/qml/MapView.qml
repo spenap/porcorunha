@@ -100,10 +100,10 @@ Item {
         MapCircle {
             center: positionSource.position.coordinate
             radius: 450 / map.zoomLevel
-            color: '#80ff0000'
+            color: Constants.MAP_POSITION_INNER_CIRCLE_COLOR
             border {
                 width: 1
-                color: 'red'
+                color: Constants.MAP_POSITION_OUTER_CIRCLE_COLOR
             }
         }
 
@@ -113,14 +113,14 @@ Item {
             color: 'transparent'
             border {
                 width: 2
-                color: 'red'
+                color: Constants.MAP_POSITION_OUTER_CIRCLE_COLOR
             }
         }
 
         MapPolyline {
             id: mapPolyline
             border {
-                color: 'red'
+                color: Constants.MAP_POLYLINE_COLOR
                 width: 4
             }
         }
@@ -240,10 +240,10 @@ Item {
             top: parent.top
             margins: Constants.DEFAULT_MARGIN / 2
         }
-        color: '#80808080'
+        color: Constants.MAP_RECTANGLE_BACKGROUND_COLOR
         radius: 10
         border {
-            color: 'darkgrey'
+            color: Constants.MAP_RECTANGLE_BORDER_COLOR
             width: 2
         }
         visible: addressText

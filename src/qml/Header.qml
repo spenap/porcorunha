@@ -4,16 +4,15 @@ import com.nokia.extras 1.1
 import 'constants.js' as Constants
 
 Item {
-    height: headerRectangle.height
     width: parent.width
+    height: appWindow.inPortrait ?
+                Constants.HEADER_DEFAULT_HEIGHT_PORTRAIT :
+                Constants.HEADER_DEFAULT_HEIGHT_LANDSCAPE
 
-    Rectangle {
-        id: headerRectangle
-        width: parent.width
-        height: appWindow.inPortrait ?
-                    Constants.HEADER_DEFAULT_HEIGHT_PORTRAIT :
-                    Constants.HEADER_DEFAULT_HEIGHT_LANDSCAPE
-        color: Constants.HEADER_BACKGROUND_COLOR
+    BorderImage {
+        id: background
+        anchors.fill: parent
+        source: 'image://theme/color4-meegotouch-view-header-fixed'
     }
 
     Text {
