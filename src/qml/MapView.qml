@@ -3,6 +3,9 @@ import QtMobility.location 1.2
 import com.nokia.meego 1.0
 import 'constants.js' as Constants
 
+// Pinch zoom behaviour from
+// http://developer.qt.nokia.com/wiki/QML_Maps_with_Pinch_Zoom
+
 Item {
     id: mapComponent
     height: Constants.MAP_AREA_HEIGHT
@@ -18,6 +21,9 @@ Item {
     property string addressText: ''
 
     property ListModel landmarksModel
+
+    property bool interactive: false
+    property bool fullscreen: interactive
 
     signal clicked()
 
@@ -66,10 +72,12 @@ Item {
     Map {
         id: map
         plugin: Plugin { name: 'nokia' }
+        connectivityMode: Map.HybridMode
         size {
             width: parent.width
             height: parent.height
         }
+        smooth: true
         zoomLevel: getZoomLevel(distance)
         center: startCentered ?
                     mapCenter :
@@ -115,12 +123,72 @@ Item {
         }
     }
 
+    PinchArea {
+        id: pinchArea
+        enabled: interactive
+        anchors.fill: parent
+
+        property double initialZoom
+
+        function calcZoomDelta(zoom, percent) {
+            return zoom + 3 * Math.log(percent)
+        }
+
+        onPinchStarted: {
+            initialZoom = map.zoomLevel
+        }
+
+        onPinchUpdated: {
+            map.zoomLevel = calcZoomDelta(initialZoom, pinch.scale)
+        }
+
+        onPinchFinished: {
+            map.zoomLevel = calcZoomDelta(initialZoom, pinch.scale)
+        }
+    }
+
+    MouseArea {
+        id: mouseArea
+        enabled: interactive
+
+        property bool isPanning: false
+        property int lastX: -1
+        property int lastY: -1
+
+        anchors.fill : parent
+
+        onPressed: {
+            isPanning = true
+            lastX = mouse.x
+            lastY = mouse.y
+        }
+
+        onReleased: {
+            isPanning = false
+        }
+
+        onPositionChanged: {
+            if (isPanning) {
+                var dx = mouse.x - lastX
+                var dy = mouse.y - lastY
+                map.pan(-dx, -dy)
+                lastX = mouse.x
+                lastY = mouse.y
+            }
+        }
+
+        onCanceled: {
+            isPanning = false;
+        }
+    }
+
     BorderImage {
         id: border
         source: 'qrc:/resources/round-corners-shadow.png'
         anchors.fill: parent
         border.left: 18; border.top: 18
         border.right: 18; border.bottom: 18
+        visible: !fullscreen
     }
 
     Repeater {
