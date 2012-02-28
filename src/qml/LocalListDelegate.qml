@@ -147,6 +147,11 @@ Item {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 rotation: listItem.expanded ? -90 : 90
+                visible: response
+
+                Behavior on rotation {
+                    NumberAnimation { duration: 100 }
+                }
             }
         }
 

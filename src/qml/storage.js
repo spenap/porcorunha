@@ -95,6 +95,37 @@ function loadLines(filter) {
     return res
 }
 
+function loadLinesByStop(busStop) {
+    var db = getDatabase()
+    var res = []
+    try {
+        db.transaction(function(tx) {
+                           var rs = tx.executeSql('SELECT code, name, direction, directionDescription, description ' +
+                                                  'FROM lines, stopslines ' +
+                                                  'WHERE code = lineCode ' +
+                                                  'AND direction = lineDirection ' +
+                                                  'AND stopCode = ? ' +
+                                                  'ORDER BY lines.rowid ASC;', busStop.code)
+                           if (rs.rows.length > 0) {
+                               for (var i = 0; i < rs.rows.length; i ++) {
+                                   var currentItem = rs.rows.item(i)
+                                   var line = new BusLine(currentItem.code,
+                                                          currentItem.name,
+                                                          currentItem.direction,
+                                                          currentItem.directionDescription,
+                                                          currentItem.description,
+                                                          { subtitle: 'Dirección ' + currentItem.directionDescription })
+                                   res.push(line)
+                               }
+                           }
+                       })
+    } catch (ex) {
+        console.log(ex)
+    }
+
+    return res
+}
+
 function saveStop(busStop) {
     var db = getDatabase()
     var result = true

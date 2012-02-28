@@ -4,6 +4,8 @@ import com.nokia.extras 1.1
 import QtMobility.location 1.2
 import 'constants.js' as Constants
 import 'porcorunha.js' as PorCorunha
+import 'storage.js' as Storage
+import 'util.js' as Util
 
 Page {
     id: stopView
@@ -40,7 +42,11 @@ Page {
     property string linesQuery: '/lines/line'
     property string distancesQuery: '/stop/line'
     property string modelQuery: distancesQuery
-    property string lastUpdate: ''
+    property bool liveInfo: true
+    property string lastUpdate: '...'
+    property string lastUpdateText: liveInfo ?
+                                        ('Última actualización: ' + lastUpdate) :
+                                        'Sin información de tiempos'
 
     Component.onCompleted: {
         loading = true
@@ -64,15 +70,36 @@ Page {
     }
 
     XmlListModel {
-        id: stopModel
+        id: remoteModel
         xml: cachedResponse
         query: modelQuery
 
         XmlRole { name: 'code'; query: '@code/string()' }
-        XmlRole { name: 'title'; query: '@name/string()' }
+        XmlRole { name: 'name'; query: '@name/string()' }
         XmlRole { name: 'direction'; query: '@direction/string()' }
-        XmlRole { name: 'subtitle'; query: '@directionDescription/string()' }
+        XmlRole { name: 'directionDescription'; query: '@directionDescription/string()' }
         XmlRole { name: 'description'; query: '@description/string()' }
+
+        onStatusChanged: {
+            if (status === XmlListModel.Ready &&
+                    remoteModel.count !== 0) {
+                localModel.clear()
+                for (var i = 0; i < remoteModel.count; i ++) {
+                    var line = new Util.BusLine(remoteModel.get(i).code,
+                                                remoteModel.get(i).name,
+                                                remoteModel.get(i).direction,
+                                                remoteModel.get(i).directionDescription,
+                                                remoteModel.get(i).description,
+                                                { subtitle: 'Dirección ' + directionDescription })
+                    localModel.append(line)
+                }
+                loading = false
+            }
+        }
+    }
+
+    ListModel {
+        id: localModel
     }
 
     ExtendedListView {
@@ -85,29 +112,41 @@ Page {
             rightMargin: Constants.DEFAULT_MARGIN
         }
         loading: stopView.loading
-        model: stopModel
+        model: localModel
         header: Label {
             anchors.horizontalCenter: parent.horizontalCenter
             platformStyle: LabelStyle {
                 fontPixelSize: Constants.FONT_XXSMALL
                 fontFamily: Constants.FONT_FAMILY_LIGHT
             }
-            text: 'Última actualización: ' + stopView.lastUpdate
+            text: lastUpdateText
             horizontalAlignment: Text.AlignHCenter
-            visible: stopView.lastUpdate !== ''
         }
         delegate: LocalListDelegate {
             response: cachedResponse
         }
     }
 
+    InfoBanner {
+        id: noLiveInfoBanner
+        text: 'No se ha podido consultar la información de tiempos'
+    }
+
     function handleResponse(messageObject) {
         cachedResponse = messageObject.response
-        if (!cachedResponse &&
-                messageObject.url === PorCorunha.moveteAPI.get_distances(stopCode)) {
-            modelQuery = linesQuery
-            asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_lines_by_stop(stopCode, 1, 20)})
+        if (!cachedResponse) {
+            var lines = Storage.loadLinesByStop({ code: stopCode })
+            if (lines.length > 0) {
+                localModel.clear()
+                for (var i = 0; i < lines.length; i ++) {
+                    localModel.append(lines[i])
+                }
+                loading = false
+                liveInfo = false
+            }
+            noLiveInfoBanner.show()
         } else {
+            liveInfo = true
             stopView.lastUpdate = Qt.formatTime(new Date)
             loading = false
         }

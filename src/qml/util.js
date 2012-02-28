@@ -5,15 +5,18 @@
 // direction="GO"
 // directionDescription="Os Castros"
 // description="Abente y Lago-Os Castros"
-function BusLine(code, name, direction, directionDescription, description) {
+function BusLine(code, name, direction, directionDescription, description, useAlias) {
     this.code = code
     this.name = name
     this.direction = direction
     this.directionDescription = directionDescription
     this.description = description
 
-    this.title = this.name
-    this.subtitle = this.description
+    if (!useAlias) {
+        useAlias = { }
+    }
+    this.title = useAlias.title ? useAlias.title : this.name
+    this.subtitle = useAlias.subtitle ? useAlias.subtitle : this.description
 }
 
 // code="523"
