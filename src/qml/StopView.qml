@@ -20,6 +20,7 @@ Page {
             id: refreshIcon
             iconId: 'toolbar-refresh'
             onClicked: {
+                localModel.clear()
                 cachedResponse = ''
                 loading = true
                 asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_distances(stopCode) })
@@ -90,7 +91,7 @@ Page {
                                                 remoteModel.get(i).direction,
                                                 remoteModel.get(i).directionDescription,
                                                 remoteModel.get(i).description,
-                                                { subtitle: 'Dirección ' + directionDescription })
+                                                { subtitle: 'Dirección ' + remoteModel.get(i).directionDescription })
                     localModel.append(line)
                 }
                 loading = false
