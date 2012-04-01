@@ -245,3 +245,33 @@ function searchStopsByCoordinate(coordinate) {
     }
     return res
 }
+
+function loadFavoriteStops(codes) {
+    var db = getDatabase()
+    var res = []
+    try {
+        db.transaction(function(tx) {
+                           var query = 'SELECT code, name, lat, lon ' +
+                                   'FROM stops WHERE code IN (' + codes[0]
+                           for (var c = 1; c < codes.length; c ++) {
+                               query += ',' + codes[c]
+                           }
+                           query += ') ORDER BY code ASC;'
+
+                           var rs = tx.executeSql(query)
+                           if (rs.rows.length > 0) {
+                               for(var i = 0; i < rs.rows.length; i++) {
+                                   var currentItem = rs.rows.item(i)
+                                   var stop = new BusStop(currentItem.code,
+                                                          currentItem.name,
+                                                          currentItem.lat,
+                                                          currentItem.lon)
+                                   res.push(stop)
+                               }
+                           }
+                       })
+    } catch (ex) {
+        console.log(ex)
+    }
+    return res
+}

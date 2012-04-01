@@ -3,6 +3,7 @@ import com.nokia.meego 1.0
 import com.nokia.extras 1.1
 import 'constants.js' as Constants
 import 'porcorunha.js' as PorCorunha
+import 'storage.js' as Storage
 
 Page {
     id: stopsView
@@ -15,41 +16,39 @@ Page {
         }
     }
 
+    property bool emptyFavorites: false
+
     Component.onCompleted: {
-        loading = true
-        asyncWorker.sendMessage({
-                                    url: PorCorunha.moveteAPI.get_stops()
-                                })
-    }
-
-    property string cachedResponse: ''
-    property bool loading: false
-    property int count: 434
-    property int currentPage: 1
-    property int length: 10
-
-    StopsModel {
-        id: remoteStopsModel
-        xml: cachedResponse
-        onStatusChanged: {
-            if (status === XmlListModel.Ready) {
-                for (var i = 0; i < remoteStopsModel.count; i ++) {
-                    stopsModel.append({
-                                          code: remoteStopsModel.get(i).code,
-                                          title: remoteStopsModel.get(i).title,
-                                          lat: remoteStopsModel.get(i).lat,
-                                          lng: remoteStopsModel.get(i).lng,
-                                      })
+        var codes = controller.favorites()
+        if (codes.length > 0) {
+            var favorites = Storage.loadFavoriteStops(codes)
+            if (favorites.length > 0) {
+                for (var i = 0; i < favorites.length; i ++) {
+                    localModel.append(favorites[i])
                 }
             }
+        } else {
+            emptyFavorites = true
         }
     }
 
     ListModel {
-        id: stopsModel
+        id: localModel
     }
 
     Header { id: header }
+
+    Label {
+        platformStyle: LabelStyle {
+            fontPixelSize: Constants.FONT_XLARGE
+            fontFamily: Constants.FONT_FAMILY_LIGHT
+        }
+        opacity: 0.5
+        horizontalAlignment: Text.AlignHCenter
+        text: 'No hay paradas favoritas'
+        anchors.centerIn: parent
+        visible: emptyFavorites
+    }
 
     ExtendedListView {
         id: stopsList
@@ -61,8 +60,7 @@ Page {
             leftMargin: Constants.DEFAULT_MARGIN
             rightMargin: Constants.DEFAULT_MARGIN
         }
-        model: stopsModel
-        loading: stopsView.loading
+        model: localModel
         onClicked: {
             appWindow.pageStack.push(stopView,
                                      {
@@ -71,20 +69,6 @@ Page {
                                          stopLat: entry.lat,
                                          stopLon: entry.lng
                                      })
-        }
-    }
-
-    function handleResponse(messageObject) {
-        loading = false
-        cachedResponse = messageObject.response
-    }
-
-    WorkerScript {
-        id: asyncWorker
-        source: 'workerscript.js'
-
-        onMessage: {
-            handleResponse(messageObject)
         }
     }
 }

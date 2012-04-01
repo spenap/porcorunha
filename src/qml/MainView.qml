@@ -42,10 +42,11 @@ Page {
             method: 0
             iconSource: 'qrc:/resources/icon-xxl-bus-stop.png'
         }
-//        ListElement {
-//            title: 'Paradas'
-//            method: 1
-//        }
+        ListElement {
+            title: 'Paradas favoritas'
+            method: 1
+            iconSource: 'qrc:/resources/icon-xxl-bus-stop.png'
+        }
         ListElement {
             title: 'Búsqueda'
             method: 2
@@ -114,6 +115,9 @@ Page {
         case 0:
             appWindow.pageStack.push(linesView)
             break
+        case 1:
+            appWindow.pageStack.push(stopsView)
+            break
         case 2:
             appWindow.pageStack.push(searchView)
             break
@@ -133,6 +137,11 @@ Page {
     Component {
         id: stopView
         StopView { }
+    }
+
+    Component {
+        id: stopsView
+        StopsView { }
     }
 
     Component {
