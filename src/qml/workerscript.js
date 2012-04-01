@@ -3,14 +3,7 @@ Qt.include('constants.js')
 Qt.include('storage.js')
 
 WorkerScript.onMessage = function(message) {
-            if (message.action === SAVE_LINE_ACTION) {
-                saveLine(message.line)
-            } else if (message.action === SAVE_STOP_LINE_ACTION) {
-                saveStop(message.stop)
-                saveStopAtLine(message.stop, message.line)
-            } else /*if (message.action === ASYNC_FETCH_ACTION)*/ {
-                fetchAsync(message.url)
-            }
+            fetchAsync(message.url)
         }
 
 function fetchAsync(serviceUrl) {
