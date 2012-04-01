@@ -3,6 +3,8 @@
 
 #include "reversegeocoder.h"
 #include <QObject>
+#include <QStringList>
+#include <QSettings>
 
 class QDeclarativeContext;
 
@@ -16,6 +18,9 @@ public:
 public Q_SLOTS:
     int lookup(double latitude, double longitude);
     QString lookupAddress(int lookupId);
+    bool isFavorite(QString code) const;
+    void setFavorite(QString code, bool value);
+    QStringList favorites() const;
     void openStoreClient(const QString& url) const;
 
 Q_SIGNALS:
@@ -29,6 +34,7 @@ private:
     ReverseGeocoder* m_reverseGeoncoder;
     QHash<int, QString> m_addressLookupTable;
     bool m_inSimulator;
+    QSettings m_settings;
 };
 
 #endif // CONTROLLER_H

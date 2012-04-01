@@ -5,6 +5,7 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
+static const QString FAVORITE_STOPS("favorites");
 static const QString STORE_DBUS_IFACE("com.nokia.OviStoreClient");
 
 Controller::Controller(QDeclarativeContext *context) :
@@ -12,7 +13,8 @@ Controller::Controller(QDeclarativeContext *context) :
     m_declarativeContext(context),
     m_reverseGeoncoder(new ReverseGeocoder),
     m_addressLookupTable(),
-    m_inSimulator(false)
+    m_inSimulator(false),
+    m_settings()
 {
 #ifdef QT_SIMULATOR
     m_inSimulator = true;
@@ -49,6 +51,37 @@ void Controller::onAddressResolved(int lookupId, QString address)
 {
     m_addressLookupTable.insert(lookupId, address);
     emit addressResolved(lookupId, address);
+}
+
+bool Controller::isFavorite(QString code) const
+{
+    QStringList favorites;
+    favorites = m_settings.value(FAVORITE_STOPS,
+                                 QVariant::fromValue(favorites)).value<QStringList>();
+
+    return favorites.contains(code);
+}
+
+void Controller::setFavorite(QString code, bool value)
+{
+    QStringList favorites;
+    favorites = m_settings.value(FAVORITE_STOPS,
+                                 QVariant::fromValue(favorites)).value<QStringList>();
+
+    if (value && !favorites.contains(code)) {
+        favorites.append(code);
+    } else if (!value) {
+        favorites.removeAll(code);
+    }
+    m_settings.setValue(FAVORITE_STOPS, QVariant::fromValue(favorites));
+}
+
+QStringList Controller::favorites() const
+{
+    QStringList favorites;
+    favorites = m_settings.value(FAVORITE_STOPS,
+                                 QVariant::fromValue(favorites)).value<QStringList>();
+    return favorites;
 }
 
 void Controller::openStoreClient(const QString& url) const
