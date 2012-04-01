@@ -17,6 +17,14 @@ Page {
             onClicked: pageStack.pop()
         }
         ToolIcon {
+            id: favoriteIcon
+            iconId: favorite ? 'toolbar-favorite-mark' : 'toolbar-favorite-unmark'
+            onClicked: {
+                favorite = !favorite
+                controller.setFavorite(stopCode, favorite)
+            }
+        }
+        ToolIcon {
             id: refreshIcon
             iconId: 'toolbar-refresh'
             onClicked: {
@@ -48,9 +56,11 @@ Page {
     property string lastUpdateText: liveInfo ?
                                         ('Última actualización: ' + lastUpdate) :
                                         'Sin información de tiempos'
+    property bool favorite: false
 
     Component.onCompleted: {
         loading = true
+        favorite = controller.isFavorite(stopCode)
         asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_distances(stopCode) })
     }
 
