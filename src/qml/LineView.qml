@@ -182,46 +182,46 @@ Page {
             rightMargin: Constants.DEFAULT_MARGIN
         }
 
-    front: ExtendedListView {
-        anchors.fill: parent
-        model: localModel
-        loading: lineView.loading
-        onClicked: {
-            appWindow.pageStack.push(stopView,
-                                     {
-                                         stopCode: entry.code,
-                                         stopName: entry.title,
-                                         stopLat: entry.lat,
-                                         stopLon: entry.lng
-                                     })
+        front: ExtendedListView {
+            anchors.fill: parent
+            model: localModel
+            loading: lineView.loading
+            onClicked: {
+                appWindow.pageStack.push(stopView,
+                                         {
+                                             stopCode: entry.code,
+                                             stopName: entry.title,
+                                             stopLat: entry.lat,
+                                             stopLon: entry.lng
+                                         })
+            }
         }
-    }
-    back: MapView {
-        id: mapView
-        anchors.fill: parent
-        drawLandmarks: false
-        drawPolyline: true
-        landmarksModel: localModel
-        interactive: true
-        fullscreen: false
-    }
+        back: MapView {
+            id: mapView
+            anchors.fill: parent
+            drawLandmarks: false
+            drawPolyline: true
+            landmarksModel: localModel
+            interactive: true
+            fullscreen: false
+        }
 
-    transform: Rotation {
-             id: rotation
-             origin { x: flipable.width/2; y: flipable.height/2 }
-             axis { z: 0; x: 0; y: 1 }
-             angle: 0
-         }
+        transform: Rotation {
+            id: rotation
+            origin { x: flipable.width/2; y: flipable.height/2 }
+            axis { z: 0; x: 0; y: 1 }
+            angle: 0
+        }
 
-         states: State {
-             name: 'back'
-             PropertyChanges { target: rotation; angle: 180 }
-             when: flipable.flipped
-         }
+        states: State {
+            name: 'back'
+            when: flipable.flipped
+            PropertyChanges { target: rotation; angle: 180 }
+        }
 
-         transitions: Transition {
-             NumberAnimation { target: rotation; property: 'angle'; duration: 800 }
-         }
+        transitions: Transition {
+            NumberAnimation { target: rotation; property: 'angle'; duration: 800 }
+        }
     }
 
     function handleResponse(messageObject) {
