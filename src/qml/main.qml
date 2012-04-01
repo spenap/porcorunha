@@ -8,9 +8,6 @@ PageStackWindow {
     initialPage: mainView
     showStatusBar: appWindow.inPortrait
 
-    property string currentAddress: 'Actualizando...'
-    property int currentAddressLookupId: 0
-
     Component.onCompleted: {
         if (theme.colorScheme) {
             // TODO: Set a suitable color scheme (available in Qt Components master)
@@ -21,25 +18,8 @@ PageStackWindow {
 
     PositionSource {
         id: positionSource
-        active: inSimulator ? true : platformWindow.active
-
-        onPositionChanged: {
-            currentAddressLookupId =
-                    controller.lookup(positionSource.position.coordinate.latitude,
-                                      positionSource.position.coordinate.longitude)
-        }
-    }
-
-    Connections {
-        target: controller
-        onAddressResolved: handleAddressResolved(lookupId, address)
+        active: inSimulator || platformWindow.active
     }
 
     MainView { id: mainView }
-
-    function handleAddressResolved(lookupId, address) {
-        if (currentAddressLookupId === lookupId) {
-            appWindow.currentAddress = address
-        }
-    }
 }
