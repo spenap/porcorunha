@@ -16,6 +16,7 @@ public:
 public Q_SLOTS:
     int lookup(double latitude, double longitude);
     QString lookupAddress(int lookupId);
+    void openStoreClient(const QString& url) const;
 
 Q_SIGNALS:
     void addressResolved(int lookupId, QString address);

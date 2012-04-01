@@ -27,5 +27,6 @@
         <file>resources/icon-xxl-search.png</file>
         <file>resources/round-corners.png</file>
         <file>resources/round-corners-shadow.png</file>
+        <file>qml/AboutView.qml</file>
     </qresource>
 </RCC>

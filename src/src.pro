@@ -1,5 +1,5 @@
 TEMPLATE = app
-QT += declarative
+QT += declarative dbus
 TARGET = "porcorunha"
 DEPENDPATH += .
 INCLUDEPATH += .
@@ -50,7 +50,8 @@ OTHER_FILES += \
     qml/porcorunha.js \
     qml/storage.js \
     qml/util.js \
-    TODO.txt
+    TODO.txt \
+    qml/AboutView.qml
 
 unix {
     isEmpty(PREFIX) {

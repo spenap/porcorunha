@@ -2,6 +2,10 @@
 
 #include <QGeoCoordinate>
 #include <QDeclarativeContext>
+#include <QDBusInterface>
+#include <QDBusPendingCall>
+
+static const QString STORE_DBUS_IFACE("com.nokia.OviStoreClient");
 
 Controller::Controller(QDeclarativeContext *context) :
     QObject(),
@@ -45,4 +49,23 @@ void Controller::onAddressResolved(int lookupId, QString address)
 {
     m_addressLookupTable.insert(lookupId, address);
     emit addressResolved(lookupId, address);
+}
+
+void Controller::openStoreClient(const QString& url) const
+{
+    // Based on
+    // https://gitorious.org/n9-apps-client/n9-apps-client/blobs/master/daemon/notificationhandler.cpp#line178
+#ifdef QT_SIMULATOR
+    Q_UNUSED(url)
+#else
+    QDBusInterface dbusInterface(STORE_DBUS_IFACE,
+                                 "/",
+                                 STORE_DBUS_IFACE,
+                                 QDBusConnection::sessionBus());
+
+    QStringList callParams;
+    callParams << url;
+
+    dbusInterface.asyncCall("LaunchWithLink", QVariant::fromValue(callParams));
+#endif
 }
