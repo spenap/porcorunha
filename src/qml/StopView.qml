@@ -58,26 +58,40 @@ Page {
                                         'Sin información de tiempos'
     property bool favorite: false
 
+    property MapView mapArea
+
     Component.onCompleted: {
         loading = true
         favorite = controller.isFavorite(stopCode)
         asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_distances(stopCode) })
+        var mapComponent = Qt.createComponent('MapView.qml')
+        mapArea = mapComponent.createObject(mapParent,
+                                            {
+                                                addressText: stopName,
+                                                mapCenter: stopView.coordinate,
+                                                startCentered: true,
+                                                distance: 100
+                                            })
+        mapArea.anchors.fill = mapParent
+    }
+
+    Component.onDestruction: {
+        if (mapArea) {
+            mapArea.destroy()
+        }
     }
 
     Header { id: header }
 
-    MapView {
-        id: mapArea
+    Item {
+        id: mapParent
         anchors {
             top: header.bottom
             left: parent.left
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
-        addressText: stopName
-        mapCenter: stopView.coordinate
-        startCentered: true
-        distance: 100
+        height: Constants.MAP_AREA_HEIGHT
     }
 
     XmlListModel {
@@ -115,7 +129,7 @@ Page {
 
     ExtendedListView {
         anchors {
-            top: mapArea.bottom
+            top: mapParent.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom

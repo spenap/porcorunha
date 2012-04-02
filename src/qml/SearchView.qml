@@ -26,6 +26,26 @@ Page {
 
     Header { id: header }
 
+    property MapView mapArea
+
+    Component.onCompleted: {
+        var mapComponent = Qt.createComponent('MapView.qml')
+        mapArea = mapComponent.createObject(mapParent,
+                                            {
+                                                landmarksModel: localModel,
+                                            })
+        mapArea.anchors.fill = mapParent
+        mapArea.clicked.connect(function() {
+                                    mapArea.interactive = !mapArea.interactive
+                                })
+    }
+
+    Component.onDestruction: {
+        if (mapArea) {
+            mapArea.destroy()
+        }
+    }
+
     function retrieveStopsNearby() {
         var nearStops =
                 Storage.searchStopsByCoordinate(positionSource.position.coordinate)
@@ -106,39 +126,37 @@ Page {
         }
     }
 
-    MapView {
-        id: mapArea
+    Item {
+        id: mapParent
         anchors {
             left: parent.left
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
-        landmarksModel: localModel
-        onClicked: mapArea.interactive = !mapArea.interactive
         states: [
             State {
                 name: 'fullScreen'
                 when: mapArea.interactive
                 PropertyChanges {
-                    target: mapArea
+                    target: mapParent
                     anchors.margins: 0
                     height: parent.height
                 }
                 AnchorChanges {
-                    target: mapArea
-                    anchors.top: mapArea.parent.top
+                    target: mapParent
+                    anchors.top: mapParent.parent.top
                 }
             },
             State {
                 name: 'widget'
                 when: !mapArea.interactive
                 PropertyChanges {
-                    target: mapArea
+                    target: mapParent
                     anchors.margins: Constants.DEFAULT_MARGIN
                     height: Constants.MAP_AREA_HEIGHT
                 }
                 AnchorChanges {
-                    target: mapArea
+                    target: mapParent
                     anchors.top: searchInput.bottom
                 }
             }
@@ -150,7 +168,7 @@ Page {
         anchors {
             left: parent.left
             right: parent.right
-            top: mapArea.bottom
+            top: mapParent.bottom
             margins: Constants.DEFAULT_MARGIN
         }
         text: 'Paradas cerca de aquí'

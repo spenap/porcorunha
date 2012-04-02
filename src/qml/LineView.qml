@@ -32,8 +32,20 @@ Page {
     property bool loading: false
     property variant cachedResponse: { 'GO': '', 'RETURN': '' }
 
+    property MapView mapView
+
     Component.onCompleted: {
         loading = true
+        var mapComponent = Qt.createComponent('MapView.qml')
+        mapView = mapComponent.createObject(mapParent,
+                                            {
+                                                drawLandmarks: false,
+                                                drawPolyline: true,
+                                                landmarksModel: localModel,
+                                                interactive: true,
+                                                fullscreen: false
+                                            })
+        mapView.anchors.fill = mapParent
         var stops = Storage.loadStopsByLine({ direction: direction, lineCode: lineCode })
         if (stops.length === 0) {
             asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.show_line(lineCode, direction) })
@@ -43,6 +55,12 @@ Page {
             }
             loading = false
             mapView.fitContentInMap()
+        }
+    }
+
+    Component.onDestruction: {
+        if (mapView) {
+            mapView.destroy()
         }
     }
 
@@ -196,14 +214,9 @@ Page {
                                          })
             }
         }
-        back: MapView {
-            id: mapView
+        back: Item {
+            id: mapParent
             anchors.fill: parent
-            drawLandmarks: false
-            drawPolyline: true
-            landmarksModel: localModel
-            interactive: true
-            fullscreen: false
         }
 
         transform: Rotation {
