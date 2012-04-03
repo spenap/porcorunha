@@ -51,7 +51,7 @@ function localFetchManager(query, model, args) {
         elements = searchStopsByName(args.name)
         break
     case 'loadLinesByStop':
-        elements = loadLinesByStop(args.code)
+        elements = loadLinesByStop(args)
         break
     default:
         console.debug('Unsupported query:', query)
