@@ -10,7 +10,10 @@ Item {
     id: mapComponent
     height: Constants.MAP_AREA_HEIGHT
 
-    property Coordinate mapCenter: Coordinate { }
+    property Coordinate mapCenter: Coordinate {
+        latitude: 43.355266
+        longitude: -8.410993
+    }
     property Coordinate lowerLeftCoordinate: Coordinate { }
     property Coordinate upperRightCoordinate: Coordinate { }
     property real distance: 1000
@@ -26,6 +29,10 @@ Item {
     property bool fullscreen: interactive
 
     signal clicked()
+
+    Component.onCompleted: {
+        state = 'ready'
+    }
 
     Behavior on height {
         NumberAnimation { duration: 100; easing.type: Easing.InOutQuad }
@@ -87,9 +94,7 @@ Item {
         }
         smooth: true
         zoomLevel: getZoomLevel(distance)
-        center: startCentered ?
-                    mapCenter :
-                    positionSource.position.coordinate
+        center: mapCenter
 
         MapImage {
             coordinate: mapCenter
@@ -98,7 +103,8 @@ Item {
         }
 
         MapCircle {
-            center: positionSource.position.coordinate
+            id: positionInnerCircle
+            center: mapCenter
             radius: 450 / map.zoomLevel
             color: Constants.MAP_POSITION_INNER_CIRCLE_COLOR
             border {
@@ -108,7 +114,8 @@ Item {
         }
 
         MapCircle {
-            center: positionSource.position.coordinate
+            id: positionOuterCircle
+            center: mapCenter
             radius: 750 / map.zoomLevel
             color: 'transparent'
             border {
@@ -255,4 +262,22 @@ Item {
             color: 'white'
         }
     }
+
+    states: [
+        State {
+            name: 'ready'
+            PropertyChanges {
+                target: positionInnerCircle
+                center: positionSource.position.coordinate
+            }
+            PropertyChanges {
+                target: positionOuterCircle
+                center: positionSource.position.coordinate
+            }
+            PropertyChanges {
+                target: map
+                center: startCentered ? mapCenter : positionSource.position.coordinate
+            }
+        }
+    ]
 }
