@@ -29,12 +29,10 @@ Page {
     property MapView mapArea
 
     Component.onCompleted: {
-        var mapComponent = Qt.createComponent('MapView.qml')
-        mapArea = mapComponent.createObject(mapParent,
-                                            {
-                                                landmarksModel: localModel,
-                                            })
-        mapArea.anchors.fill = mapParent
+        mapArea = createMapView(mapParent,
+                                {
+                                    landmarksModel: localModel
+                                })
         mapArea.clicked.connect(function() {
                                     mapArea.interactive = !mapArea.interactive
                                 })
@@ -47,15 +45,16 @@ Page {
     }
 
     function retrieveStopsNearby() {
-        var nearStops =
-                Storage.searchStopsByCoordinate(positionSource.position.coordinate)
-        if (nearStops.length > 0 ) {
-            localModel.clear()
-            for (var i = 0; i < nearStops.length; i ++) {
-                localModel.append(nearStops[i])
-            }
-            mapArea.fitContentInMap()
-        }
+        localModel.clear()
+        asyncWorker.sendMessage({
+                                    action: Constants.LOCAL_FETCH_ACTION,
+                                    query: 'searchStopsByCoordinate',
+                                    model: localModel,
+                                    args: {
+                                        latitude: positionSource.position.coordinate.latitude,
+                                        longitude: positionSource.position.coordinate.longitude
+                                    }
+                                })
     }
 
     TextField {
@@ -74,15 +73,12 @@ Page {
         Keys.onReturnPressed: {
             mapArea.forceActiveFocus()
             localModel.clear()
-            var stops = Storage.searchStopsByName('%' + searchInput.text + '%')
-            if (stops.length !== 0) {
-                for (var i = 0; i < stops.length; i ++) {
-                    localModel.append(stops[i])
-                }
-                mapArea.fitContentInMap()
-            } else {
-                remoteModel.source = PorCorunha.moveteAPI.search(searchInput.text)
-            }
+            asyncWorker.sendMessage({
+                                        action: Constants.LOCAL_FETCH_ACTION,
+                                        query: 'searchStopsByName',
+                                        model: localModel,
+                                        args: { name: '%' + searchInput.text + '%' }
+                                    })
         }
         Image {
             id: clearText
@@ -198,6 +194,25 @@ Page {
                                          stopLat: entry.lat,
                                          stopLon: entry.lng
                                      })
+        }
+    }
+
+    function handleResponse(messageObject) {
+        if (messageObject.action === Constants.LOCAL_FETCH_RESPONSE) {
+            if (localModel.count === 0) {
+                remoteModel.source = PorCorunha.moveteAPI.search(searchInput.text)
+            } else {
+                mapArea.fitContentInMap()
+            }
+        }
+    }
+
+    WorkerScript {
+        id: asyncWorker
+        source: 'workerscript.js'
+
+        onMessage: {
+            handleResponse(messageObject)
         }
     }
 }

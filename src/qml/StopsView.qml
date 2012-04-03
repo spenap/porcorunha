@@ -21,12 +21,12 @@ Page {
     Component.onCompleted: {
         var codes = controller.favorites()
         if (codes.length > 0) {
-            var favorites = Storage.loadFavoriteStops(codes)
-            if (favorites.length > 0) {
-                for (var i = 0; i < favorites.length; i ++) {
-                    localModel.append(favorites[i])
-                }
-            }
+            asyncWorker.sendMessage({
+                                        action: Constants.LOCAL_FETCH_ACTION,
+                                        query: 'loadFavoriteStops',
+                                        model: localModel,
+                                        args: { codes: codes }
+                                    })
         } else {
             emptyFavorites = true
         }
@@ -69,6 +69,16 @@ Page {
                                          stopLat: entry.lat,
                                          stopLon: entry.lng
                                      })
+        }
+    }
+
+    WorkerScript {
+        id: asyncWorker
+        source: 'workerscript.js'
+
+        onMessage: {
+            emptyFavorites = (localModel.count === 0)
+            console.debug('EmptyFavorites', emptyFavorites)
         }
     }
 }

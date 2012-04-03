@@ -31,7 +31,10 @@ Page {
                 localModel.clear()
                 cachedResponse = ''
                 loading = true
-                asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_distances(stopCode) })
+                asyncWorker.sendMessage({
+                                            action: Constants.REMOTE_FETCH_ACTION,
+                                            url: PorCorunha.moveteAPI.get_distances(stopCode)
+                                        })
             }
         }
     }
@@ -63,16 +66,17 @@ Page {
     Component.onCompleted: {
         loading = true
         favorite = controller.isFavorite(stopCode)
-        asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.get_distances(stopCode) })
-        var mapComponent = Qt.createComponent('MapView.qml')
-        mapArea = mapComponent.createObject(mapParent,
-                                            {
-                                                addressText: stopName,
-                                                mapCenter: stopView.coordinate,
-                                                startCentered: true,
-                                                distance: 100
-                                            })
-        mapArea.anchors.fill = mapParent
+        asyncWorker.sendMessage({
+                                    action: Constants.REMOTE_FETCH_ACTION,
+                                    url: PorCorunha.moveteAPI.get_distances(stopCode)
+                                })
+        mapArea = createMapView(mapParent,
+                                {
+                                    addressText: stopName,
+                                    mapCenter: stopView.coordinate,
+                                    startCentered: true,
+                                    distance: 100
+                                })
     }
 
     Component.onDestruction: {
@@ -158,22 +162,25 @@ Page {
     }
 
     function handleResponse(messageObject) {
-        cachedResponse = messageObject.response
-        if (!cachedResponse) {
-            var lines = Storage.loadLinesByStop({ code: stopCode })
-            if (lines.length > 0) {
-                localModel.clear()
-                for (var i = 0; i < lines.length; i ++) {
-                    localModel.append(lines[i])
-                }
-                loading = false
-                liveInfo = false
-            }
+        loading = false
+        if (messageObject.action === Constants.LOCAL_FETCH_RESPONSE) {
+            liveInfo = false
             noLiveInfoBanner.show()
-        } else {
-            liveInfo = true
-            stopView.lastUpdate = Qt.formatTime(new Date)
-            loading = false
+        } else if (messageObject.action === Constants.REMOTE_FETCH_RESPONSE) {
+            cachedResponse = messageObject.response
+            if (!cachedResponse) {
+                localModel.clear()
+                asyncWorker.sendMessage({
+                                            action: Constants.LOCAL_FETCH_ACTION,
+                                            query: 'loadLinesByStop',
+                                            model: localModel,
+                                            args: { code: stopCode }
+                                        })
+
+            } else {
+                liveInfo = true
+                stopView.lastUpdate = Qt.formatTime(new Date)
+            }
         }
     }
 

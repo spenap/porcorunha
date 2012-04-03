@@ -21,19 +21,12 @@ Page {
     property string cachedResponse: ''
 
     Component.onCompleted: {
-        loading = true
-        var lines = Storage.loadLines({ direction: 'GO' })
-        if (lines.length === 0) {
-            asyncWorker.sendMessage({
-                                        action: Constants.ASYNC_FETCH_ACTION,
-                                        url: PorCorunha.moveteAPI.get_lines(1, 50)
-                                    })
-        } else {
-            for (var i = 0; i < lines.length; i ++) {
-                localModel.append(lines[i])
-            }
-            loading = false
-        }
+        asyncWorker.sendMessage({
+                                    action: Constants.LOCAL_FETCH_ACTION,
+                                    query: 'loadLines',
+                                    model: localModel,
+                                    args: { direction: 'GO' }
+                                })
     }
 
     LinesModel {
@@ -53,7 +46,7 @@ Page {
                     }
                     if (!inSimulator) {
                         asyncWorker.sendMessage({
-                                                    action: Constants.SAVE_LINE_ACTION,
+                                                    action: Constants.LOCAL_SAVE_ACTION,
                                                     line: line
                                                 })
                     }
@@ -92,7 +85,20 @@ Page {
     }
 
     function handleResponse(messageObject) {
-        cachedResponse = messageObject.response
+        if (messageObject.action === Constants.LOCAL_FETCH_RESPONSE) {
+            if (localModel.count === 0) {
+                loading = true
+                asyncWorker.sendMessage({
+                                            action: Constants.REMOTE_FETCH_ACTION,
+                                            url: PorCorunha.moveteAPI.get_lines(1, 50)
+                                        })
+            } else {
+                loading = false
+            }
+        } else if (messageObject.action === Constants.REMOTE_FETCH_RESPONSE) {
+            loading = false
+            cachedResponse = messageObject.response
+        }
     }
 
     WorkerScript {

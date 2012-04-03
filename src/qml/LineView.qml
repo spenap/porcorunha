@@ -35,27 +35,12 @@ Page {
     property MapView mapView
 
     Component.onCompleted: {
-        loading = true
-        var mapComponent = Qt.createComponent('MapView.qml')
-        mapView = mapComponent.createObject(mapParent,
-                                            {
-                                                drawLandmarks: false,
-                                                drawPolyline: true,
-                                                landmarksModel: localModel,
-                                                interactive: true,
-                                                fullscreen: false
-                                            })
-        mapView.anchors.fill = mapParent
-        var stops = Storage.loadStopsByLine({ direction: direction, lineCode: lineCode })
-        if (stops.length === 0) {
-            asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.show_line(lineCode, direction) })
-        } else {
-            for (var i = 0; i < stops.length; i ++) {
-                localModel.append(stops[i])
-            }
-            loading = false
-            mapView.fitContentInMap()
-        }
+        asyncWorker.sendMessage({
+                                    action: Constants.LOCAL_FETCH_ACTION,
+                                    query: 'loadStopsByLine',
+                                    model: localModel,
+                                    args: { direction: direction, lineCode: lineCode }
+                                })
     }
 
     Component.onDestruction: {
@@ -73,18 +58,12 @@ Page {
 
     onDirectionChanged: {
         localModel.clear()
-        var stops = Storage.loadStopsByLine({ direction: direction, lineCode: lineCode })
-        if (stops.length !== 0) {
-            for (var i = 0; i < stops.length; i ++) {
-                localModel.append(stops[i])
-            }
-            mapView.fitContentInMap()
-        } else if (!cachedResponse[direction]) {
-            loading = true
-            asyncWorker.sendMessage({ url: PorCorunha.moveteAPI.show_line(lineCode, direction) })
-        } else {
-            remoteModel.xml = cachedResponse[direction]
-        }
+        asyncWorker.sendMessage({
+                                    action: Constants.LOCAL_FETCH_ACTION,
+                                    query: 'loadStopsByLine',
+                                    model: localModel,
+                                    args: { direction: direction, lineCode: lineCode }
+                                })
     }
 
     Header { id: header }
@@ -238,15 +217,37 @@ Page {
     }
 
     function handleResponse(messageObject) {
-        loading = false
-        var response = {
-            'GO': cachedResponse['GO'],
-            'RETURN': cachedResponse['RETURN']
+        if (!mapView) {
+            mapView = createMapView(mapParent,
+                                    {
+                                        drawLandmarks: false,
+                                        drawPolyline: true,
+                                        landmarksModel: localModel,
+                                        interactive: true,
+                                        fullscreen: false
+                                    })
         }
-
-        response[direction] = messageObject.response
-        cachedResponse = response
-        remoteModel.xml = cachedResponse[direction]
+        if (messageObject.action === Constants.LOCAL_FETCH_RESPONSE) {
+            if (localModel.count === 0) {
+                loading = true
+                asyncWorker.sendMessage({
+                                            action: Constants.REMOTE_FETCH_ACTION,
+                                            url: PorCorunha.moveteAPI.show_line(lineCode, direction)
+                                        })
+            } else {
+                loading = false
+                mapView.fitContentInMap()
+            }
+        } else if (messageObject.action === Constants.REMOTE_FETCH_RESPONSE) {
+            loading = false
+            var response = {
+                'GO': cachedResponse['GO'],
+                'RETURN': cachedResponse['RETURN']
+            }
+            response[direction] = messageObject.response
+            cachedResponse = response
+            remoteModel.xml = cachedResponse[direction]
+        }
     }
 
     WorkerScript {
