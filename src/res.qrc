@@ -28,5 +28,6 @@
         <file>resources/round-corners.png</file>
         <file>resources/round-corners-shadow.png</file>
         <file>qml/AboutView.qml</file>
+        <file>resources/icon-about-porcorunha.png</file>
     </qresource>
 </RCC>

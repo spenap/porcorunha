@@ -74,7 +74,7 @@ Page {
             Image {
                 id: aboutImage
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: 'qrc:/resources/icon-l-bus-stop.png'
+                source: 'qrc:/resources/icon-about-porcorunha.png'
             }
 
             Label {

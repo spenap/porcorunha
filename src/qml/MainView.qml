@@ -73,7 +73,7 @@ Page {
                 id: mainMenuDelegate
                 Rectangle {
                     width: parent.width
-                    height: 220
+                    height: 190
                     radius: 20
                     color: 'darkgrey'
                     opacity: mouseArea.pressed ? 0.5 : 1
@@ -92,7 +92,6 @@ Page {
                         anchors {
                             bottom: parent.bottom
                             horizontalCenter: parent.horizontalCenter
-                            margins: Constants.DEFAULT_MARGIN
                         }
                         text: model.title
                         platformStyle: LabelStyle {
