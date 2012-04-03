@@ -18,6 +18,8 @@ Page {
         'along with this program. If not, see ' +
         '<a href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a><br /><br />'
 
+    orientationLock: PageOrientation.LockPortrait
+
     tools: ToolBarLayout {
         ToolIcon {
             id: backIcon

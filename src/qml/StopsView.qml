@@ -16,6 +16,8 @@ Page {
         }
     }
 
+    orientationLock: PageOrientation.LockPortrait
+
     property bool emptyFavorites: false
 
     Component.onCompleted: {

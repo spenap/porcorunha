@@ -39,6 +39,8 @@ Page {
         }
     }
 
+    orientationLock: PageOrientation.LockPortrait
+
     property int stopCode: 0
     property string stopName: ''
     property real stopLat: 0.0

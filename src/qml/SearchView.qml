@@ -24,6 +24,8 @@ Page {
         }
     }
 
+    orientationLock: PageOrientation.LockPortrait
+
     Header { id: header }
 
     property MapView mapArea

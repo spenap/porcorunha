@@ -24,6 +24,8 @@ Page {
         }
     }
 
+    orientationLock: PageOrientation.LockPortrait
+
     property int lineCode: 0
     property string lineName: ''
     property string description: ''

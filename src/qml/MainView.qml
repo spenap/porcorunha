@@ -7,6 +7,8 @@ import 'storage.js' as Storage
 Page {
     id: mainView
 
+    orientationLock: PageOrientation.LockPortrait
+
     Component.onCompleted: {
         Storage.initialize()
     }

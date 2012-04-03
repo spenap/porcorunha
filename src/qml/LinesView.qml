@@ -17,6 +17,8 @@ Page {
         }
     }
 
+    orientationLock: PageOrientation.LockPortrait
+
     property bool loading: false
     property string cachedResponse: ''
 
