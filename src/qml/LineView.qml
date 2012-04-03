@@ -57,7 +57,6 @@ Page {
     }
 
     onDirectionChanged: {
-        localModel.clear()
         asyncWorker.sendMessage({
                                     action: Constants.LOCAL_FETCH_ACTION,
                                     query: 'loadStopsByLine',

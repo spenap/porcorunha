@@ -32,6 +32,7 @@ function remoteFetch(serviceUrl) {
 }
 
 function localFetchManager(query, model, args) {
+    model.clear()
     var elements = []
     switch (query) {
     case 'loadFavoriteStops':

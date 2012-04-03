@@ -169,7 +169,6 @@ Page {
         } else if (messageObject.action === Constants.REMOTE_FETCH_RESPONSE) {
             cachedResponse = messageObject.response
             if (!cachedResponse) {
-                localModel.clear()
                 asyncWorker.sendMessage({
                                             action: Constants.LOCAL_FETCH_ACTION,
                                             query: 'loadLinesByStop',

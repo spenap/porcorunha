@@ -45,7 +45,6 @@ Page {
     }
 
     function retrieveStopsNearby() {
-        localModel.clear()
         asyncWorker.sendMessage({
                                     action: Constants.LOCAL_FETCH_ACTION,
                                     query: 'searchStopsByCoordinate',
@@ -72,7 +71,6 @@ Page {
 
         Keys.onReturnPressed: {
             mapArea.forceActiveFocus()
-            localModel.clear()
             asyncWorker.sendMessage({
                                         action: Constants.LOCAL_FETCH_ACTION,
                                         query: 'searchStopsByName',
@@ -94,7 +92,6 @@ Page {
             anchors.fill: clearText
             onClicked: {
                 searchInput.text = ''
-                localModel.clear()
             }
         }
     }
