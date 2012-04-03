@@ -3,6 +3,6 @@ TODO:
  [X] About message: move to a separate View later
  [X] Splash screen
  [X] Theme: not available in PR1.1
- [ ] Landscape layouts
+ [-] Landscape layouts
  [X] Interactive map
- [ ] Deferred loading of lines/stops
+ [X] Deferred loading of lines/stops
