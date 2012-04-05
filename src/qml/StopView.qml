@@ -13,7 +13,8 @@ Page {
     tools: ToolBarLayout {
         ToolIcon {
             id: backIcon
-            iconId: 'toolbar-back'
+            iconId: loading ? 'toolbar-back-dimmed' : 'toolbar-back'
+            enabled: !loading
             onClicked: pageStack.pop()
         }
         ToolIcon {
