@@ -31,12 +31,8 @@ Page {
     property MapView mapArea
 
     Component.onCompleted: {
-        mapArea = createMapView(mapParent,
-                                {
-                                    landmarksModel: localModel
-                                })
-        mapArea.clicked.connect(function() {
-                                    mapArea.interactive = !mapArea.interactive
+        asyncWorker.sendMessage({
+                                    action: Constants.SINGLE_SHOT_ACTION
                                 })
     }
 
@@ -203,6 +199,14 @@ Page {
             } else {
                 mapArea.fitContentInMap()
             }
+        } else if (messageObject.action === Constants.SINGLE_SHOT_RESPONSE) {
+            mapArea = createMapView(mapParent,
+                                    {
+                                        landmarksModel: localModel
+                                    })
+            mapArea.clicked.connect(function() {
+                                        mapArea.interactive = !mapArea.interactive
+                                    })
         }
     }
 

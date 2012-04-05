@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import com.nokia.meego 1.0
 import QtMobility.location 1.2
+import 'constants.js' as Constants
 
 PageStackWindow {
     id: appWindow
@@ -16,8 +17,9 @@ PageStackWindow {
             // http://fiferboy.blogspot.com/2011/08/qml-colour-themes-in-harmattan.html
             theme.colorScheme = 'darkGreen'
         }
-        var map = createMapView(parentHelper, { })
-        map.destroy()
+        asyncWorker.sendMessage({
+                                    action: Constants.SINGLE_SHOT_ACTION
+                                })
     }
 
     PositionSource {
@@ -42,5 +44,21 @@ PageStackWindow {
         id: parentHelper
         visible: false
         height: 1; width: 1
+    }
+
+    function handleResponse(messageObject) {
+        if (messageObject.action === Constants.SINGLE_SHOT_RESPONSE) {
+            var map = createMapView(parentHelper, { })
+            map.destroy()
+        }
+    }
+
+    WorkerScript {
+        id: asyncWorker
+        source: 'workerscript.js'
+
+        onMessage: {
+            handleResponse(messageObject)
+        }
     }
 }

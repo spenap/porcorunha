@@ -10,6 +10,9 @@ WorkerScript.onMessage = function(message) {
             case LOCAL_FETCH_ACTION:
                 localFetchManager(message.query, message.model, message.args)
                 break
+            case SINGLE_SHOT_ACTION:
+                WorkerScript.sendMessage({ action: SINGLE_SHOT_RESPONSE })
+                break
             default:
                 console.debug('Unsupported action:', message.action)
                 break
