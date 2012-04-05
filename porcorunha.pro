@@ -8,6 +8,9 @@ TEMPLATE = subdirs
 SUBDIRS  = src
 
 OTHER_FILES += \
+    README.md \
+    COPYING \
+    AUTHORS \
     qtc_packaging/debian_harmattan/rules \
     qtc_packaging/debian_harmattan/porcorunha.aegis \
     qtc_packaging/debian_harmattan/copyright \
