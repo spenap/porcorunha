@@ -81,7 +81,7 @@ Page {
 
             Label {
                 id: aboutVersion
-                text: 'Por Coruña 0.1.0'
+                text: 'Por Coruña 0.1.1'
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 platformStyle: LabelStyle {
