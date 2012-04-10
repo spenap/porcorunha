@@ -1,3 +1,9 @@
+porcorunha (0.1.1) unstable; urgency=low
+
+  * Properly anchor Map to SearchView
+
+ -- Simon Pena <spena@igalia.com>  Tue, 10 Apr 2012 22:49:20 +0300
+
 porcorunha (0.1.0) unstable; urgency=low
 
   * Initial release
