@@ -120,10 +120,12 @@ Page {
     Item {
         id: mapParent
         anchors {
+            top: searchInput.bottom
             left: parent.left
             right: parent.right
             margins: Constants.DEFAULT_MARGIN
         }
+        height: Constants.MAP_AREA_HEIGHT
         states: [
             State {
                 name: 'fullScreen'
